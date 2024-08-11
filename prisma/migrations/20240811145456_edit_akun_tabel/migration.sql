@@ -1,0 +1,9 @@
+-- DropForeignKey
+ALTER TABLE `Akun` DROP FOREIGN KEY `Akun_userId_fkey`;
+
+-- AlterTable
+ALTER TABLE `Akun` ADD COLUMN `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    MODIFY `userId` VARCHAR(191) NULL;
+
+-- AddForeignKey
+ALTER TABLE `Akun` ADD CONSTRAINT `Akun_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;

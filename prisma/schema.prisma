@@ -1,0 +1,265 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                       String    @id @default(uuid())
+  jenisKelamin             String?
+  alamatDomisili           String?
+  alamatTinggal            String?
+  mulaiBergabungRS         DateTime?
+  mulaiBekerjaUnitTerakhir DateTime?
+  statusKepegawaian        String?
+  asalInstitusiPendidikan  String?
+  kelulusanTahun           Int?
+  tanggalTerbitSTR         DateTime?
+  tanggalBerakhirSTR       String?
+  tanggalTerbitSIPP        DateTime?
+  jabatanSaatIni           String?
+  levelPKSaatIni           String?
+  levelPKYangDiajukan      String?
+  levelPerawatManajer      String?
+  programMutuRCA           Boolean
+  setuju                   Boolean
+
+  orientasiYangDiikuti UserOrientasi[]
+  pelatihanYangDiikuti UserPelatihan[]
+  cpdForPK1            UserCPD_PK1[]
+  cpdForPK2            UserCPD_PK2[]
+  cpdForPK3            UserCPD_PK3[]
+  cpdForPK4            UserCPD_PK4[]
+  cpdForPK5            UserCPD_PK5[]
+  Akun                 Akun[]
+}
+
+model Akun {
+  iduser                    String    @id @default(uuid())
+  email                     String    @unique
+  password                  String
+  last_login                DateTime?
+  nama                      String
+  created_at                DateTime  @default(now())
+  role                      String
+  pendidikanTerakhir        String?
+  unitTempatBekerjaTerakhir String?
+
+  userId String?
+  User   User?   @relation(fields: [userId], references: [id])
+
+  masterRumahSakitId String?
+  MasterRumahSakit   MasterRumahSakit? @relation(fields: [masterRumahSakitId], references: [id], name: "AkunRumahSakit")
+
+  masterRuanganRSId String?
+  MasterRuanganRS   MasterRuanganRS? @relation(fields: [masterRuanganRSId], references: [id], name: "AkunRuanganRS")
+  UserAssesmen      UserAssesmen[]
+}
+
+model MasterRumahSakit {
+  id   String @id @default(uuid())
+  nama String
+
+  // One-to-Many relation to Akun
+  akun Akun[] @relation("AkunRumahSakit")
+
+  // One-to-Many relation to MasterRuanganRS
+  ruanganRS MasterRuanganRS[] @relation("RumahSakitToRuanganRS")
+}
+
+model MasterRuanganRS {
+  id   String @id @default(uuid())
+  nama String
+
+  // Foreign key to MasterRumahSakit
+  id_rs      String
+  rumahSakit MasterRumahSakit @relation("RumahSakitToRuanganRS", fields: [id_rs], references: [id])
+
+  // One-to-Many relation to Akun (optional relation)
+  akun Akun[] @relation("AkunRuanganRS")
+}
+
+model MasterOrientasi {
+  id    Int             @id @default(autoincrement())
+  value String
+  users UserOrientasi[]
+}
+
+model MasterPelatihan {
+  id    Int             @id @default(autoincrement())
+  value String
+  users UserPelatihan[]
+}
+
+model MasterCPD_PK1 {
+  id    Int           @id @default(autoincrement())
+  value String
+  users UserCPD_PK1[]
+}
+
+model MasterCPD_PK2 {
+  id    Int           @id @default(autoincrement())
+  value String
+  users UserCPD_PK2[]
+}
+
+model MasterCPD_PK3 {
+  id    Int           @id @default(autoincrement())
+  value String
+  users UserCPD_PK3[]
+}
+
+model MasterCPD_PK4 {
+  id    Int           @id @default(autoincrement())
+  value String
+  users UserCPD_PK4[]
+}
+
+model MasterCPD_PK5 {
+  id    Int           @id @default(autoincrement())
+  value String
+  users UserCPD_PK5[]
+}
+
+model UserOrientasi {
+  id          String @id @default(uuid())
+  userId      String
+  orientasiId Int
+
+  user      User            @relation(fields: [userId], references: [id])
+  orientasi MasterOrientasi @relation(fields: [orientasiId], references: [id])
+
+  @@unique([userId, orientasiId])
+}
+
+model UserPelatihan {
+  id          String @id @default(uuid())
+  userId      String
+  pelatihanId Int
+
+  user      User            @relation(fields: [userId], references: [id])
+  pelatihan MasterPelatihan @relation(fields: [pelatihanId], references: [id])
+
+  @@unique([userId, pelatihanId])
+}
+
+model UserCPD_PK1 {
+  id     Int    @id @default(autoincrement())
+  userId String
+  cpdId  Int
+
+  user User          @relation(fields: [userId], references: [id])
+  cpd  MasterCPD_PK1 @relation(fields: [cpdId], references: [id])
+
+  @@unique([userId, cpdId])
+}
+
+model UserCPD_PK2 {
+  id     Int    @id @default(autoincrement())
+  userId String
+  cpdId  Int
+
+  user User          @relation(fields: [userId], references: [id])
+  cpd  MasterCPD_PK2 @relation(fields: [cpdId], references: [id])
+
+  @@unique([userId, cpdId])
+}
+
+model UserCPD_PK3 {
+  id     Int    @id @default(autoincrement())
+  userId String
+  cpdId  Int
+
+  user User          @relation(fields: [userId], references: [id])
+  cpd  MasterCPD_PK3 @relation(fields: [cpdId], references: [id])
+
+  @@unique([userId, cpdId])
+}
+
+model UserCPD_PK4 {
+  id     Int    @id @default(autoincrement())
+  userId String
+  cpdId  Int
+
+  user User          @relation(fields: [userId], references: [id])
+  cpd  MasterCPD_PK4 @relation(fields: [cpdId], references: [id])
+
+  @@unique([userId, cpdId])
+}
+
+model UserCPD_PK5 {
+  id     Int    @id @default(autoincrement())
+  userId String
+  cpdId  Int
+
+  user User          @relation(fields: [userId], references: [id])
+  cpd  MasterCPD_PK5 @relation(fields: [cpdId], references: [id])
+
+  @@unique([userId, cpdId])
+}
+
+model MasterPertanyaanAssesmen {
+  id           Int      @id @default(autoincrement())
+  skp          String?
+  sub_kategori String?
+  kode         String?
+  keterampilan String?
+  vokasi       String?
+  ners         String?
+  tipe         String?
+  priority     Int?
+  status       Int      @default(0)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  // Relation to UserJawabanAsesmen
+  jawaban UserJawabanAsesmen[]
+}
+
+model UserAssesmen {
+  id      String   @id @default(uuid())
+  tanggal DateTime @default(now())
+  skp_1   String?
+  skp_2   String?
+  skp_3   String?
+  skp_4   String?
+  skp_5   String?
+  skp_6   String?
+  email   String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relation to UserJawabanAsesmen
+  jawaban UserJawabanAsesmen[]
+
+  Akun Akun @relation(fields: [email], references: [email])
+}
+
+model UserJawabanAsesmen {
+  id         Int      @id @default(autoincrement())
+  jawaban    String
+  skor       Int
+  created_at DateTime @default(now())
+
+  // Foreign key to UserAssesmen
+  UserAssesmenId String
+  UserAssesmen   UserAssesmen @relation(fields: [UserAssesmenId], references: [id])
+
+  // Foreign key to MasterPertanyaanAssesmen
+  MasterPertanyaanAssesmenId Int
+  MasterPertanyaanAssesmen   MasterPertanyaanAssesmen @relation(fields: [MasterPertanyaanAssesmenId], references: [id])
+}
+
+model MasterKeterampilanDiagnosis {
+  id              String @id
+  nama_kompetensi String
+}
+
+model MasterKeterampilanIntervensi {
+  id              String @id
+  nama_kompetensi String
+}
