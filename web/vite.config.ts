@@ -14,6 +14,8 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "src"),
       pjson: path.resolve(__dirname, "package.json"),
+      "app-type": path.resolve(__dirname, "types")
     },
+
   },
 })

@@ -1,4 +1,3 @@
-import { verifyPassword } from "../../../utils/password"
 import { FastifyPluginAsync } from "fastify"
 import dayjs from "dayjs"
 import { LoginRequest } from "app-type/request"
@@ -6,6 +5,8 @@ import { LoginResponse } from "app-type/response"
 import { JwtPayload } from "app-type/index"
 
 const auth: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+    const { verifyPassword } = fastify
+
     fastify.post('/login', async function (request, reply) {
         const { email, password } = request.body as LoginRequest
 
@@ -32,6 +33,12 @@ const auth: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             id_rs: akun.masterRumahSakitId,
             id_ruangan: akun.masterRuanganRSId
         }
+        await fastify.prisma.akun.update({
+            where: { email: email },
+            data: {
+                last_login: dayjs().toDate()
+            }
+        })
         return reply.send({
             token: fastify.jwt.sign(pld)
         } as LoginResponse)

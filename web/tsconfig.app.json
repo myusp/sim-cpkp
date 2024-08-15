@@ -30,11 +30,15 @@
       ],
       "pjson": [
         "package.json"
+      ],
+      "app-type/*": [
+        "types/*"
       ]
     },
     "baseUrl": ".",
   },
   "include": [
-    "src"
+    "src",
+    "types"
   ]
 }

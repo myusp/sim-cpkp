@@ -1,8 +1,21 @@
 import { PrismaClient } from '@prisma/client';
 import * as XLSX from "xlsx"
-import { hashPassword } from "../src/utils/password"
+import bcrypt from "bcrypt"
+
 
 const prisma = new PrismaClient();
+
+function hashPassword(password: string): string {
+    const saltRounds = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(password, saltRounds);
+    return hashedPassword;
+}
+
+// Fungsi untuk verifikasi password
+function verifyPassword(plainPassword: string, hashedPassword: string): boolean {
+    const isMatch = bcrypt.compareSync(plainPassword, hashedPassword);
+    return isMatch;
+}
 
 async function main() {
     console.log("seed start")

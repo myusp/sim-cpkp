@@ -9,7 +9,7 @@ import cors from '@fastify/cors';
  */
 export default fp(async (fastify) => {
     fastify.register(cors, {
-        origin: true,
-        allowedHeaders: ['Content-Type', 'Authorization']
+        origin: ["http://localhost:5173"],
+        // allowedHeaders: ['Content-Type', 'Authorization']
     })
 });

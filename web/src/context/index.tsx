@@ -1,23 +1,46 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { AppContextType } from "../types";
 import { useLocalStorage } from "@mantine/hooks"
+import { UserDetailResponse } from "app-type/response";
+import { userDetailService } from "@/services/user";
 
 export const Context = createContext<AppContextType | null>(null)
 
 export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     const [token, setToken] = useLocalStorage({
-        key: "login-tk",
+        key: "token",
         defaultValue: "",
     })
 
-    const [user, setUser] = useState()
-    const isLoggedIn = useMemo(() => false, [])
+    const [user, setUser] = useState<UserDetailResponse>()
+    const isLoggedIn = useMemo(() => !!user, [user])
+
+    useEffect(() => {
+        if (token) {
+            userDetailService()
+                .then(res => {
+                    setUser(res)
+                })
+        }
+    }, [token])
 
 
+    const handleLogin = (token: string) => {
+        setToken(token)
+    }
+    const handleLogout = () => {
+        setToken("")
+        setUser(undefined)
+    }
     return <Context.Provider
         value={{
             token,
-            isLoggedIn
+            isLoggedIn,
+            auth: {
+                login: handleLogin,
+                logout: handleLogout
+            },
+            user: user
         }}
     >
         {children}

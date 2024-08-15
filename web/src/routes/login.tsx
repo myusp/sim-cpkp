@@ -1,9 +1,32 @@
+import { useAppContext } from '@/context';
+import { loginService } from '@/services/auth';
+import { useDisclosure } from '@mantine/hooks';
 import { createFileRoute } from '@tanstack/react-router'
 import { Button, Form, Input, Image } from 'antd'
+import { LoginRequest } from 'app-type/request';
+import { useEffect } from 'react';
 
 const LoginPage = () => {
-    const onFinish = (values: unknown) => {
+    const [loading, { open, close }] = useDisclosure(false)
+    const appContext = useAppContext()
+    const navigate = Route.useNavigate()
+
+    useEffect(() => {
+        if (appContext.isLoggedIn) {
+            navigate({ to: "/" })
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [appContext.isLoggedIn])
+
+
+    const onFinish = (values: LoginRequest) => {
+        open()
+        loginService({ email: values.email, password: values.password })
+            .then(res => {
+                appContext.auth.login(res.token)
+            }).finally(close)
         console.log('Success:', values);
+
     };
 
     const onFinishFailed = (errorInfo: unknown) => {
@@ -44,7 +67,7 @@ const LoginPage = () => {
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" className="w-full bg-gradient-to-r from-teal-400 to-blue-600">
+                        <Button loading={loading} type="primary" htmlType="submit" className="w-full bg-gradient-to-r from-teal-400 to-blue-600">
                             Login
                         </Button>
                     </Form.Item>
