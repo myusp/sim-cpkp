@@ -11,13 +11,7 @@ export type UserByEmailRequest = {
 
 export type UserResetPassRequest = {
     email: string
-    password: string
-}
-
-export type UserSearchRequest = {
-    hospital_id: number
-    room_id: number
-    role: string
+    newPassword: string
 }
 
 export type UpdateUserRequest = {
@@ -61,3 +55,24 @@ export type CpdParams = {
 export type CpdBody = {
     value: string;
 };
+
+export type CreateUserRequest = {
+    email: string;
+    password: string;
+    nama: string;
+    role: string;
+    pendidikanTerakhir?: string;
+    unitTempatBekerjaTerakhir?: string;
+    userId?: string;
+    masterRumahSakitId?: string;
+    masterRuanganRSId?: string;
+};
+
+export type UserSearchRequest = {
+    keyword?: string;         // Kata kunci untuk mencari berdasarkan nama atau email
+    rumahSakitId?: string;    // ID Rumah Sakit untuk filter
+    ruanganId?: string;
+    role?: string;     // ID Ruangan untuk filter
+};
+
+

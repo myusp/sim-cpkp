@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { AppContextType } from "../types";
-import { useLocalStorage } from "@mantine/hooks"
+import { useLocalStorage, useMounted } from "@mantine/hooks"
 import { UserDetailResponse } from "app-type/response";
 import { userDetailService } from "@/services/user";
 
@@ -12,17 +12,24 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         defaultValue: "",
     })
 
+    const [isAppReady, setIsAppReady] = useState<boolean>(false)
     const [user, setUser] = useState<UserDetailResponse>()
     const isLoggedIn = useMemo(() => !!user, [user])
+    const mounted = useMounted()
 
     useEffect(() => {
-        if (token) {
-            userDetailService()
-                .then(res => {
-                    setUser(res)
-                })
+        if (mounted) {
+            if (token) {
+                userDetailService()
+                    .then(res => {
+                        setUser(res)
+                    }).finally(() => setIsAppReady(true))
+            } else {
+                setIsAppReady(true)
+            }
         }
-    }, [token])
+
+    }, [token, mounted])
 
 
     const handleLogin = (token: string) => {
@@ -40,7 +47,8 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
                 login: handleLogin,
                 logout: handleLogout
             },
-            user: user
+            user: user,
+            isAppReady: isAppReady && mounted
         }}
     >
         {children}

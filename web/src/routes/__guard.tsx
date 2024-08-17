@@ -1,7 +1,7 @@
-import { createFileRoute, Link, Outlet, useLocation } from '@tanstack/react-router';
-import { HomeOutlined, BellOutlined, BookOutlined, UserOutlined, ReadOutlined, MenuOutlined } from '@ant-design/icons';
+import { createFileRoute, Link, Outlet, useLocation, useNavigate } from '@tanstack/react-router';
+import { HomeOutlined, BellOutlined, BookOutlined, UserOutlined, ReadOutlined, MenuOutlined, LogoutOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout, Menu, theme, Image, Badge, Button, Drawer } from 'antd';
+import { Layout, Menu, theme, Image, Badge, Button, Drawer, Dropdown } from 'antd';
 import UserAvatar from '@/components/UserAvatar';
 import Typography from 'antd/es/typography/Typography';
 import { useState, useMemo, useEffect } from 'react';
@@ -45,19 +45,20 @@ const menuAdmin: MenuProps['items'] = [
     },
     {
         key: "/form",
-        label: "Form Pertanyaan",
+        label: "Form",
         children: [
             {
-                key: "/admin/data/assesment",
+                key: "/admin/form/assesment",
                 label: <Link to='/admin/form/assesment'>Pertanyaan Asesmen</Link>,
                 icon: <ReadOutlined />,
             },
             {
-                key: "/admin/data/penilaian",
+                key: "/admin/form/penilaian",
                 label: <Link to='/admin/form/penilaian'>Pertanyaan Penilaian</Link>,
                 icon: <ReadOutlined />,
             },
-        ]
+        ],
+        icon: <BookOutlined />
     }
 ];
 
@@ -72,15 +73,15 @@ const menuKaru: MenuProps['items'] = [
 
 const menuPerawat: MenuProps['items'] = [
     {
-        key: "/perawat/dashboard",
-        label: <Link to='/perawat'>Dashboard Perawat</Link>,
+        key: "/perawat",
+        label: <Link to='/perawat'>Home</Link>,
         icon: <HomeOutlined />,
     },
     // Tambahkan item menu lain yang sesuai dengan peran Perawat
 ];
 
 const GuardSession = () => {
-    const { user } = useAppContext();
+    const { user, auth, isLoggedIn, isAppReady } = useAppContext();
     const location = useLocation();
     const [openKeys, setOpenKeys] = useState<string[]>([])
     const [visible, setVisible] = useState(false);
@@ -88,6 +89,7 @@ const GuardSession = () => {
         token: { colorBgContainer },
     } = theme.useToken();
 
+    const navigate = useNavigate()
     // Menentukan menu berdasarkan role
     const menuItems = useMemo(() => {
         switch (user?.role) {
@@ -118,15 +120,25 @@ const GuardSession = () => {
 
 
     useEffect(() => {
+        console.log(openKeysByUrl, openKeys)
         if (openKeysByUrl.length > openKeys.length) {
-            setOpenKeys(openKeys)
+            setOpenKeys(openKeysByUrl)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [openKeysByUrl])
 
+    useEffect(() => {
+        if (isAppReady) {
+            if (!isLoggedIn) {
+                navigate({ to: "/login" })
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAppReady, isLoggedIn])
+
 
     return (
-        <Layout className='h-screen'>
+        <Layout className='min-h-screen'>
             <Header className='bg-teal-400 flex justify-between items-center'>
                 <div className='flex items-center md:hidden'>
                     <Button
@@ -147,7 +159,29 @@ const GuardSession = () => {
                     <Badge className='mr-4' size="small" count={5}>
                         <BellOutlined style={{ fontSize: 25, color: "white" }} />
                     </Badge>
-                    <UserAvatar size={"large"} />
+                    <Dropdown
+                        menu={{
+                            items: [
+                                {
+                                    key: '1',
+                                    label: (
+                                        <a onClick={() => {
+                                            auth.logout()
+                                            navigate({ to: "/login" })
+                                        }}>
+                                            Logout
+                                        </a>
+                                    ),
+                                    icon: <LogoutOutlined />
+                                },
+                            ]
+                        }}
+                        placement='bottomRight'
+                        arrow
+                    >
+                        <UserAvatar size={"large"} />
+                    </Dropdown>
+
                 </div>
             </Header>
             <Layout>

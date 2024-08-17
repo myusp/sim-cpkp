@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import axios from 'axios';
 
 // Membuat instance Axios
@@ -39,15 +40,15 @@ axiosInstance.interceptors.response.use(
 
             // Tampilkan pesan error berdasarkan status code
             if (statusCode === 401) {
-                alert('Unauthorized! Please login again.');
+                message.error('Unauthorized! Please login again.');
             } else if (statusCode === 403) {
-                alert('Forbidden! You do not have permission to access this resource.');
+                message.error('Forbidden! You do not have permission to access this resource.');
             } else if (statusCode === 404) {
-                alert('Not Found! The resource you are looking for does not exist.');
+                message.error('Not Found! The resource you are looking for does not exist.');
             } else if (statusCode === 500) {
-                alert('Internal Server Error! Something went wrong on the server.');
+                message.error('Internal Server Error! Something went wrong on the server.');
             } else {
-                alert(`Error ${statusCode}: ${error.response.data.message || 'An error occurred'}`);
+                message.error(`Error ${statusCode}: ${error.response.data.message || 'An error occurred'}`);
             }
 
             // Atau, Anda bisa menggunakan console.log

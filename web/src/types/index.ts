@@ -7,5 +7,6 @@ export type AppContextType = {
     auth: {
         login: (token: string) => void,
         logout: () => void
-    }
+    },
+    isAppReady: boolean
 }

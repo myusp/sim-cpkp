@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Space, Modal, Form, Input, message, Popconfirm, Select } from 'antd';
+import { Table, Button, Space, Modal, Form, Input, message, Popconfirm, Select, Row, Col } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import { getCpdList, updateCpd, addCpd, deleteCpd } from '@/services/cpd';
 import { createFileRoute } from '@tanstack/react-router';
 import { CpdParams } from 'app-type/request';
 import { CpdResponse } from 'app-type/response';
-import { useMounted } from '@mantine/hooks';
+import { useDebouncedValue, useMounted } from '@mantine/hooks';
+import { debounce } from "lodash"
 
 
 const { Search } = Input;
@@ -20,6 +21,7 @@ const CpdManager: React.FC = () => {
   const [searchText, setSearchText] = useState<string>(''); // State untuk menyimpan teks pencarian
   const [filterPk, setFilterPk] = useState<string>(''); // State untuk menyimpan filter PK
   const [pageSize, setPageSize] = useState<number>(10); // State untuk mengatur jumlah item per halaman
+  const [debounceSearchText] = useDebouncedValue(searchText, 700)
 
   const mounted = useMounted()
   const [form] = Form.useForm(); // Ant Design form instance
@@ -29,8 +31,11 @@ const CpdManager: React.FC = () => {
   }, [mounted]);
 
   useEffect(() => {
-    handleFilter(); // Memfilter data setiap kali `searchText` atau `filterPk` berubah
-  }, [cpdList, searchText, filterPk]);
+    const fn = debounce(handleFilter, 300)
+    fn()
+    return fn.cancel // Memfilter data setiap kali `searchText` atau `filterPk` berubah
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cpdList, debounceSearchText, filterPk]);
 
   // Fungsi untuk mengambil daftar CPD dari API
   const fetchCpdList = async () => {
@@ -109,8 +114,9 @@ const CpdManager: React.FC = () => {
     if (filterPk) {
       filteredData = filteredData.filter((item) => item.pk === filterPk);
     }
+    console.log(filteredData)
 
-    setFilteredList(filteredData);
+    setFilteredList([...filteredData]);
   };
 
   // Kolom untuk tabel
@@ -141,26 +147,13 @@ const CpdManager: React.FC = () => {
 
   return (
     <div className="p-4 bg-white rounded-lg shadow-md">
-      <div className="flex justify-between mb-4">
-        <div className="flex space-x-2">
-          <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-            Tambah CPD
-          </Button>
-          <Button icon={<ReloadOutlined />} onClick={fetchCpdList}>
-            Refresh
-          </Button>
-          <Search
-            placeholder="Cari CPD"
-            onSearch={setSearchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            style={{ width: 200 }}
-            value={searchText}
-          />
+      <Row gutter={[16, 16]} className='w-full mb-4'>
+        <Col span={24}>
           <Select
-            placeholder="Filter PK"
+            className='w-full'
+            placeholder="Cari PK"
             onChange={(value) => setFilterPk(value)}
             allowClear
-            style={{ width: 120 }}
             value={filterPk || undefined}
           >
             <Option value="pk1">PK1</Option>
@@ -169,6 +162,28 @@ const CpdManager: React.FC = () => {
             <Option value="pk4">PK4</Option>
             <Option value="pk5">PK5</Option>
           </Select>
+        </Col>
+        <Col span={24} className='bg-red'>
+          <Search
+            className='w-full'
+            placeholder="Cari CPD"
+            onSearch={setSearchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            value={searchText}
+          />
+        </Col>
+      </Row>
+      <div className="flex justify-between mb-4">
+
+        <div className="flex space-x-2">
+
+          <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
+            Tambah CPD
+          </Button>
+          <Button icon={<ReloadOutlined />} onClick={fetchCpdList}>
+            Refresh
+          </Button>
+
         </div>
         <Select defaultValue={10} onChange={(value) => setPageSize(value)} style={{ width: 120 }}>
           <Option value={5}>5 per halaman</Option>
@@ -178,9 +193,10 @@ const CpdManager: React.FC = () => {
         </Select>
       </div>
       <Table
+        scroll={{ x: 1000 }}
         columns={columns}
         dataSource={filteredList}
-        rowKey="id"
+        rowKey={(k) => `${k.pk}-${k.id}`}
         loading={loading}
         pagination={{ pageSize }}
       />
@@ -194,7 +210,7 @@ const CpdManager: React.FC = () => {
         <Form form={form} layout="vertical" name="cpdForm">
           <Form.Item
             name="value"
-            label="Value"
+            label="Keterampilan"
             rules={[{ required: true, message: 'Silakan masukkan value' }]}
           >
             <Input />

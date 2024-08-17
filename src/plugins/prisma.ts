@@ -8,7 +8,11 @@ export interface PrismaPluginOptions {
 
 // Plugin untuk mengintegrasikan Prisma ke dalam Fastify
 export default fp<PrismaPluginOptions>((fastify: FastifyInstance, opts: PrismaPluginOptions, done: () => void) => {
-    const prisma = new PrismaClient();
+    const prisma = new PrismaClient({
+        transactionOptions: {
+            timeout: 1000 * 60
+        }
+    });
 
     // Dekorasi instance Fastify dengan Prisma Client
     fastify.decorate('prisma', prisma);

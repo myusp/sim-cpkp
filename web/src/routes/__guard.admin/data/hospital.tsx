@@ -115,7 +115,7 @@ const Hospital: React.FC = () => {
           Refresh
         </Button>
       </div>
-      <Table columns={columns} dataSource={hospitals} rowKey="id" loading={loading} />
+      <Table scroll={{ x: 1000 }} columns={columns} dataSource={hospitals} rowKey="id" loading={loading} />
 
       <Modal
         title={editingHospital ? 'Edit Rumah Sakit' : 'Tambah Rumah Sakit'}

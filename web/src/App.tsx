@@ -6,6 +6,7 @@ import { RouterProvider, createHashHistory, createRouter } from '@tanstack/react
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 import { AppContextProvider } from './context'
+import { Suspense } from "react"
 
 const hashHistory = createHashHistory({})
 // Create a new router instance
@@ -20,21 +21,24 @@ declare module '@tanstack/react-router' {
 function App() {
   return (
     <AppContextProvider>
-      <ConfigProvider
-        theme={{
-          token: {
-            "colorPrimary": "#18ac96",
-            "colorInfo": "#6ea4fa",
-            "colorSuccess": "#a0d911",
-            "colorWarning": "#fadb14",
-            "wireframe": false,
-            "fontSize": 16,
-            "borderRadius": 12
-          }
-        }}
-      >
-        <RouterProvider router={router} />
-      </ConfigProvider>
+      <Suspense>
+        <ConfigProvider
+          theme={{
+            token: {
+              "colorPrimary": "#18ac96",
+              "colorInfo": "#6ea4fa",
+              "colorSuccess": "#a0d911",
+              "colorWarning": "#fadb14",
+              "wireframe": false,
+              "fontSize": 16,
+              "borderRadius": 12
+            }
+          }}
+        >
+          <RouterProvider router={router} />
+        </ConfigProvider>
+      </Suspense>
+
     </AppContextProvider>
   )
 }

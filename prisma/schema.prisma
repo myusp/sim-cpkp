@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum PendidikanTerakhir {
+  VOKASI
+  NERS
+  S2_NERS
+}
+
 model User {
   id                       String    @id @default(uuid())
   jenisKelamin             String?
@@ -45,7 +51,7 @@ model Akun {
   nama                      String
   created_at                DateTime  @default(now())
   role                      String
-  pendidikanTerakhir        String?
+  pendidikanTerakhir        PendidikanTerakhir?
   unitTempatBekerjaTerakhir String?
 
   userId String?

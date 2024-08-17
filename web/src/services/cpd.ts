@@ -49,3 +49,5 @@ export const deleteCpd = async (id: string, pk: CpdParams['pk']): Promise<void> 
         throw error;
     }
 };
+
+

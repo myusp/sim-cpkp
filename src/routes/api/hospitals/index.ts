@@ -10,6 +10,7 @@ const hospital: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             const hospitals = await fastify.prisma.masterRumahSakit.findMany();
             return hospitals;
         } catch (error) {
+            console.log(error)
             reply.status(500);
             return { error: "Failed to fetch hospitals" };
         }

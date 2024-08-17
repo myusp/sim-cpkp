@@ -34,7 +34,7 @@ export interface User {
 export interface Akun {
     iduser: string;
     email: string;
-    password: string;
+    password?: string;
     last_login?: Date;
     nama: string;
     created_at: Date;

@@ -126,7 +126,7 @@ const RoomManagement: React.FC = () => {
     return (
         <div className="p-4 bg-white rounded-lg shadow-md">
             <HospitalDropdown onChange={setSelectedHospital} />
-            <div className="flex justify-between mb-4">
+            <div className="flex justify-between mb-4 mt-4">
                 <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
                     Tambah Ruangan
                 </Button>
@@ -134,7 +134,7 @@ const RoomManagement: React.FC = () => {
                     Refresh
                 </Button>
             </div>
-            <Table columns={columns} dataSource={rooms} rowKey="id" loading={loading} />
+            <Table scroll={{ x: 1000 }} columns={columns} dataSource={rooms} rowKey="id" loading={loading} />
 
             <Modal
                 title={editingRoom ? 'Edit Ruangan' : 'Tambah Ruangan'}
