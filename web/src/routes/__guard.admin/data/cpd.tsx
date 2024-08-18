@@ -175,16 +175,18 @@ const CpdManager: React.FC = () => {
       </Row>
       <div className="flex justify-between mb-4">
 
-        <div className="flex space-x-2">
-
+        <div className=" space-x-2 hidden md:flex">
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
             Tambah CPD
           </Button>
           <Button icon={<ReloadOutlined />} onClick={fetchCpdList}>
             Refresh
           </Button>
-
         </div>
+        <Button.Group className='flex md:hidden'>
+          <Button type="primary" icon={<PlusOutlined />} onClick={showModal} />
+          <Button icon={<ReloadOutlined />} onClick={fetchCpdList} />
+        </Button.Group>
         <Select defaultValue={10} onChange={(value) => setPageSize(value)} style={{ width: 120 }}>
           <Option value={5}>5 per halaman</Option>
           <Option value={10}>10 per halaman</Option>

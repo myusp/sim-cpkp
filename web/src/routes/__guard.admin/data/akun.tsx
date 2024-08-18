@@ -190,12 +190,18 @@ const UserManagement: React.FC = () => {
 
       </Row>
       <div className="flex justify-between mb-4">
-        <Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal}>
-          Tambah User
-        </Button>
-        <Button icon={<ReloadOutlined />} onClick={fetchUsers}>
-          Refresh
-        </Button>
+        <div className=" space-x-2 hidden md:flex">
+          <Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal}>
+            Tambah Akun
+          </Button>
+          <Button icon={<ReloadOutlined />} onClick={fetchUsers}>
+            Refresh
+          </Button>
+        </div>
+        <Button.Group className='flex md:hidden'>
+          <Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal} />
+          <Button icon={<ReloadOutlined />} onClick={fetchUsers} />
+        </Button.Group>
       </div>
       <Table
         scroll={{ x: 1000 }}

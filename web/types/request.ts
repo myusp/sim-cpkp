@@ -1,4 +1,4 @@
-import { Akun, User } from "."
+import { Akun, MasterPertanyaanAssesmen, User } from "."
 
 export type LoginRequest = {
     email: string
@@ -73,6 +73,15 @@ export type UserSearchRequest = {
     rumahSakitId?: string;    // ID Rumah Sakit untuk filter
     ruanganId?: string;
     role?: string;     // ID Ruangan untuk filter
+};
+
+
+export type MasterPertanyaanCreateRequest = Omit<MasterPertanyaanAssesmen, 'id' | 'created_at' | 'updated_at'>;
+
+export type MasterPertanyaanUpdateRequest = Partial<Omit<MasterPertanyaanAssesmen, 'created_at' | 'updated_at'>>;
+
+export type MasterPertanyaanParams = {
+    id: number;
 };
 
 

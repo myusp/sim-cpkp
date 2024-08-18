@@ -10,7 +10,7 @@ datasource db {
 enum PendidikanTerakhir {
   VOKASI
   NERS
-  S2_NERS
+  S2_KEP
 }
 
 model User {
@@ -44,12 +44,12 @@ model User {
 }
 
 model Akun {
-  iduser                    String    @id @default(uuid())
-  email                     String    @unique
+  iduser                    String              @id @default(uuid())
+  email                     String              @unique
   password                  String
   last_login                DateTime?
   nama                      String
-  created_at                DateTime  @default(now())
+  created_at                DateTime            @default(now())
   role                      String
   pendidikanTerakhir        PendidikanTerakhir?
   unitTempatBekerjaTerakhir String?
@@ -226,18 +226,19 @@ model MasterPertanyaanAssesmen {
 }
 
 model UserAssesmen {
-  id      String   @id @default(uuid())
-  tanggal DateTime @default(now())
-  skp_1   String?
-  skp_2   String?
-  skp_3   String?
-  skp_4   String?
-  skp_5   String?
-  skp_6   String?
-  email   String
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id                    String   @id @default(uuid())
+  tanggal               DateTime @default(now())
+  skp_1                 String?
+  skp_2                 String?
+  skp_3                 String?
+  skp_4                 String?
+  skp_5                 String?
+  skp_6                 String?
+  email                 String
+  id_master_pertanyaans String?
+  id_penilaian          String?
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
 
   // Relation to UserJawabanAsesmen
   jawaban UserJawabanAsesmen[]

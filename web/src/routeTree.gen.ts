@@ -16,9 +16,10 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
 import { Route as AboutImport } from './routes/about'
 import { Route as guardImport } from './routes/__guard'
-import { Route as KaruIndexImport } from './routes/karu/index'
 import { Route as guardPerawatIndexImport } from './routes/__guard.perawat/index'
+import { Route as guardKaruIndexImport } from './routes/__guard.karu/index'
 import { Route as guardAdminIndexImport } from './routes/__guard.admin/index'
+import { Route as guardPerawatSelfAssesmenIndexImport } from './routes/__guard.perawat/self-assesmen/index'
 import { Route as guardAdminFormPenilaianImport } from './routes/__guard.admin/form/penilaian'
 import { Route as guardAdminFormAssesmentImport } from './routes/__guard.admin/form/assesment'
 import { Route as guardAdminDataRoomImport } from './routes/__guard.admin/data/room'
@@ -52,13 +53,13 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
-const KaruIndexRoute = KaruIndexImport.update({
-  path: '/karu/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const guardPerawatIndexRoute = guardPerawatIndexImport.update({
   path: '/perawat/',
+  getParentRoute: () => guardRoute,
+} as any)
+
+const guardKaruIndexRoute = guardKaruIndexImport.update({
+  path: '/karu/',
   getParentRoute: () => guardRoute,
 } as any)
 
@@ -66,6 +67,12 @@ const guardAdminIndexRoute = guardAdminIndexImport.update({
   path: '/admin/',
   getParentRoute: () => guardRoute,
 } as any)
+
+const guardPerawatSelfAssesmenIndexRoute =
+  guardPerawatSelfAssesmenIndexImport.update({
+    path: '/perawat/self-assesmen/',
+    getParentRoute: () => guardRoute,
+  } as any)
 
 const guardAdminFormPenilaianRoute = guardAdminFormPenilaianImport.update({
   path: '/admin/form/penilaian',
@@ -129,18 +136,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
-    '/karu/': {
-      id: '/karu/'
-      path: '/karu'
-      fullPath: '/karu'
-      preLoaderRoute: typeof KaruIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/__guard/admin/': {
       id: '/__guard/admin/'
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof guardAdminIndexImport
+      parentRoute: typeof guardImport
+    }
+    '/__guard/karu/': {
+      id: '/__guard/karu/'
+      path: '/karu'
+      fullPath: '/karu'
+      preLoaderRoute: typeof guardKaruIndexImport
       parentRoute: typeof guardImport
     }
     '/__guard/perawat/': {
@@ -192,6 +199,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof guardAdminFormPenilaianImport
       parentRoute: typeof guardImport
     }
+    '/__guard/perawat/self-assesmen/': {
+      id: '/__guard/perawat/self-assesmen/'
+      path: '/perawat/self-assesmen'
+      fullPath: '/perawat/self-assesmen'
+      preLoaderRoute: typeof guardPerawatSelfAssesmenIndexImport
+      parentRoute: typeof guardImport
+    }
   }
 }
 
@@ -201,6 +215,7 @@ export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
   guardRoute: guardRoute.addChildren({
     guardAdminIndexRoute,
+    guardKaruIndexRoute,
     guardPerawatIndexRoute,
     guardAdminDataAkunRoute,
     guardAdminDataCpdRoute,
@@ -208,10 +223,10 @@ export const routeTree = rootRoute.addChildren({
     guardAdminDataRoomRoute,
     guardAdminFormAssesmentRoute,
     guardAdminFormPenilaianRoute,
+    guardPerawatSelfAssesmenIndexRoute,
   }),
   AboutRoute,
   LoginRoute,
-  KaruIndexRoute,
 })
 
 /* prettier-ignore-end */
@@ -225,8 +240,7 @@ export const routeTree = rootRoute.addChildren({
         "/",
         "/__guard",
         "/about",
-        "/login",
-        "/karu/"
+        "/login"
       ]
     },
     "/": {
@@ -236,13 +250,15 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__guard.tsx",
       "children": [
         "/__guard/admin/",
+        "/__guard/karu/",
         "/__guard/perawat/",
         "/__guard/admin/data/akun",
         "/__guard/admin/data/cpd",
         "/__guard/admin/data/hospital",
         "/__guard/admin/data/room",
         "/__guard/admin/form/assesment",
-        "/__guard/admin/form/penilaian"
+        "/__guard/admin/form/penilaian",
+        "/__guard/perawat/self-assesmen/"
       ]
     },
     "/about": {
@@ -251,11 +267,12 @@ export const routeTree = rootRoute.addChildren({
     "/login": {
       "filePath": "login.tsx"
     },
-    "/karu/": {
-      "filePath": "karu/index.tsx"
-    },
     "/__guard/admin/": {
       "filePath": "__guard.admin/index.tsx",
+      "parent": "/__guard"
+    },
+    "/__guard/karu/": {
+      "filePath": "__guard.karu/index.tsx",
       "parent": "/__guard"
     },
     "/__guard/perawat/": {
@@ -284,6 +301,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/__guard/admin/form/penilaian": {
       "filePath": "__guard.admin/form/penilaian.tsx",
+      "parent": "/__guard"
+    },
+    "/__guard/perawat/self-assesmen/": {
+      "filePath": "__guard.perawat/self-assesmen/index.tsx",
       "parent": "/__guard"
     }
   }

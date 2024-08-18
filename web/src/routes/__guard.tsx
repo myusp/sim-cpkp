@@ -1,11 +1,16 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate } from '@tanstack/react-router';
 import { HomeOutlined, BellOutlined, BookOutlined, UserOutlined, ReadOutlined, MenuOutlined, LogoutOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout, Menu, theme, Image, Badge, Button, Drawer, Dropdown } from 'antd';
+import { Layout, Menu, theme, Image, Badge, Button, Drawer, Dropdown, message } from 'antd';
 import UserAvatar from '@/components/UserAvatar';
 import Typography from 'antd/es/typography/Typography';
 import { useState, useMemo, useEffect } from 'react';
 import { useAppContext } from '@/context';
+import { debounce } from 'lodash';
+import EditUserModal from '@/components/user/EditUserModal';
+import { updateUserService } from '@/services/user';
+import { Akun } from 'app-type/index';
+import { UpdateUserRequest } from 'app-type/request';
 
 const { Header, Sider } = Layout;
 
@@ -77,6 +82,11 @@ const menuPerawat: MenuProps['items'] = [
         label: <Link to='/perawat'>Home</Link>,
         icon: <HomeOutlined />,
     },
+    {
+        key: "/perawat/self-assesmen",
+        label: <Link to='/perawat/self-assesmen'>Self-Asesmen</Link>,
+        icon: <BookOutlined />,
+    },
     // Tambahkan item menu lain yang sesuai dengan peran Perawat
 ];
 
@@ -88,6 +98,7 @@ const GuardSession = () => {
     const {
         token: { colorBgContainer },
     } = theme.useToken();
+    const [editUserModalVisible, setEditUserModalVisible] = useState<boolean>(false);
 
     const navigate = useNavigate()
     // Menentukan menu berdasarkan role
@@ -108,6 +119,21 @@ const GuardSession = () => {
         const paths = location.pathname.split('/').filter(Boolean);
         return paths.length > 1 ? [`/${paths.slice(0, 2).join('/')}`] : [];
     }, [location.pathname]);
+
+    useEffect(() => {
+
+        const fn = debounce(() => {
+            if (isAppReady) {
+                const paths = location.pathname.split('/')
+                if (paths[1] != user?.role) {
+                    navigate({ to: `/${user?.role}` })
+                }
+            }
+        }, 300)
+        fn()
+        return fn.cancel
+    }, [isAppReady, location.pathname])
+
 
 
     const showDrawer = () => {
@@ -136,7 +162,16 @@ const GuardSession = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAppReady, isLoggedIn])
 
+    const handleAddOrUpdateUser = async (values: never) => {
+        try {
 
+            await updateUserService(user?.email as string, values as UpdateUserRequest);
+            message.success('User berhasil diperbarui');
+            setEditUserModalVisible(false);
+        } catch (error) {
+            message.error('Gagal menyimpan data user');
+        }
+    };
     return (
         <Layout className='min-h-screen'>
             <Header className='bg-teal-400 flex justify-between items-center'>
@@ -156,6 +191,14 @@ const GuardSession = () => {
                     </Typography>
                 </div>
                 <div className='flex items-center'>
+                    <EditUserModal
+                        visible={editUserModalVisible}
+                        onCancel={() => setEditUserModalVisible(false)}
+                        onOk={(values) => handleAddOrUpdateUser(values as never)}
+                        initialValues={{ email: user?.email as string, akun: user as unknown as Akun }}
+                        is_edit_by_personal
+                        title='Edit Profil'
+                    />
                     <Badge className='mr-4' size="small" count={5}>
                         <BellOutlined style={{ fontSize: 25, color: "white" }} />
                     </Badge>
@@ -163,7 +206,16 @@ const GuardSession = () => {
                         menu={{
                             items: [
                                 {
-                                    key: '1',
+                                    key: "1",
+                                    label: <a onClick={() => {
+                                        setEditUserModalVisible(true)
+                                    }}>
+                                        Profil
+                                    </a>,
+                                    icon: <UserOutlined />
+                                },
+                                {
+                                    key: '2',
                                     label: (
                                         <a onClick={() => {
                                             auth.logout()
@@ -179,7 +231,7 @@ const GuardSession = () => {
                         placement='bottomRight'
                         arrow
                     >
-                        <UserAvatar size={"large"} />
+                        <UserAvatar className='cursor-pointer' size={"large"} />
                     </Dropdown>
 
                 </div>

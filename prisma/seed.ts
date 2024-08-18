@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+/* eslint-disable */
+import { PendidikanTerakhir, PrismaClient } from '@prisma/client';
 import * as XLSX from "xlsx"
 import bcrypt from "bcrypt"
 
@@ -11,11 +12,15 @@ function hashPassword(password: string): string {
     return hashedPassword;
 }
 
-// Fungsi untuk verifikasi password
-function verifyPassword(plainPassword: string, hashedPassword: string): boolean {
-    const isMatch = bcrypt.compareSync(plainPassword, hashedPassword);
-    return isMatch;
+function makeUrlSafeRole(role: string) {
+    return role.toLowerCase().replace(/\s+/g, '_');
 }
+
+function makeUrlSafePendidkan(p: string) {
+    if (p == undefined) return null
+    return p.toUpperCase().replace(/\s+/g, '_') as PendidikanTerakhir 
+}
+
 
 async function main() {
     console.log("seed start")
@@ -47,114 +52,144 @@ async function main() {
     })
     console.log(masterpertanyaan)
 
+    const workbookmaster = XLSX.readFile('seed-db.xlsx');
+    // const sheetNames = workbook.SheetNames;
+    const jsonData: any[] = XLSX.utils.sheet_to_json(workbookmaster.Sheets["akun"]);
+    // insert master data and akun
 
-    const pwd = hashPassword("password")
-    // Create User
-    const akun = await prisma.akun.create({
-        data: {
-            email: "admin@gmail.com",
-            nama: "admin aplikasi",
-            password: pwd,
-            role: "admin",
+    // Step 1: Identifikasi unik Rumah Sakit dan Ruangan
+    const rumahSakitSet = new Set();
+    const ruanganRSMap = new Map();
 
+    for (const record of jsonData) {
+        if (record.RS) {
+            rumahSakitSet.add(record.RS);
         }
+
+        if (record.Runagan) {
+            if (!ruanganRSMap.has(record.RS)) {
+                ruanganRSMap.set(record.RS, new Set());
+            }
+            ruanganRSMap.get(record.RS).add(record.Runagan);
+        }
+    }
+
+    // Step 2: Masukkan data Rumah Sakit
+    const rumahSakitMap = new Map();
+
+    for (const rs of rumahSakitSet) {
+        const rumahSakit = await prisma.masterRumahSakit.create({
+            data: {
+                nama: `${rs}`,
+            }
+        });
+        rumahSakitMap.set(rs, rumahSakit.id);
+    }
+
+    // Step 3: Masukkan data Ruangan RS
+    const ruanganRSMapFinal = new Map();
+
+    for (const [rs, ruanganSet] of ruanganRSMap.entries()) {
+        const idRS = rumahSakitMap.get(rs);
+        for (const ruangan of ruanganSet) {
+            const ruanganRS = await prisma.masterRuanganRS.create({
+                data: {
+                    nama: ruangan,
+                    rumahSakit: {
+                        connect: { id: idRS }
+                    }
+                }
+            });
+            ruanganRSMapFinal.set(`${rs}-${ruangan}`, ruanganRS.id);
+        }
+    }
+
+    // Step 4: Persiapkan data untuk createMany Akun
+    const akunData = jsonData.map(record => {
+        const rumahSakitId = record.RS ? rumahSakitMap.get(record.RS) : null;
+        const ruanganRSId = record.Runagan ? ruanganRSMapFinal.get(`${record.RS}-${record.Runagan}`) : null;
+
+        return {
+            email: record.Email,
+            password: hashPassword(record.Password),
+            nama: record.Nama,
+            role: makeUrlSafeRole(record.Role),  // Gunakan fungsi makeUrlSafeRole
+            masterRumahSakitId: rumahSakitId,
+            masterRuanganRSId: ruanganRSId,
+            pendidikanTerakhir: makeUrlSafePendidkan(record?.Pendidikan)
+        };
     });
-    console.log(akun)
 
-    // Master data creation for Orientasi and Pelatihan
-    const orientasi = await prisma.masterOrientasi.createMany({
-        data: [
-            { value: 'Pelatihan Sasaran Keselamatan Pasien (SKP)' },
-            { value: 'Pelatihan Pencegahan dan Pengendalian Infeksi (PPI)' },
-            { value: 'Pelatihan Komunikasi Efektif' },
-            { value: 'Pelatihan Keselamatan Kerja Karyawan dan Lingkungan (K3L)' },
-            { value: 'Bantuan Hidup Dasar (BHD)' },
-            { value: 'Pelatihan Komunikasi efektif' },
-            { value: 'Pelatihan Dokumentasi menggunakan AFYA' },
-        ]
+    // Step 5: Masukkan data Akun secara massal dengan createMany
+    await prisma.akun.createMany({
+        data: akunData,
+        skipDuplicates: true, // Mengabaikan duplikasi berdasarkan kunci unik seperti email
     });
-    console.log(orientasi)
 
-    const pelatihan = await prisma.masterPelatihan.createMany({
-        data: [
-            { value: 'Basic Cardiac and Trauma Life Support (BTCLS)' },
-            { value: 'Advanced Cardiac Life Support (ACLS)/Bantuan Hidup Lanjut (BLS)' },
-            { value: 'Pelatihan Keterampilan ICU Dasar' },
-            { value: 'Pelatihan Keterampilan ICU Lanjut' },
-            { value: 'Pelatihan Keterampilan NICU Level 2/Level 3' },
-            { value: 'Pelatihan Keterampilan PICU' },
-            { value: 'Pelatihan Perawatan Luka' },
-            { value: 'Pelatihan Keterampilan Kamar Bedah' },
-            { value: 'Pelatihan Keterampilan IGD Dasar' },
-        ]
+    // Persiapkan data untuk createMany
+    const jsonDataOrientasi: any[] = XLSX.utils.sheet_to_json(workbookmaster.Sheets["orientasi"]);
+    const orientasiData = jsonDataOrientasi.map(record => ({
+        value: record.Nama
+    }));
+
+    // Masukkan data orientasi secara massal dengan createMany
+    await prisma.masterOrientasi.createMany({
+        data: orientasiData,
+        skipDuplicates: true, // Mengabaikan duplikasi jika ada
     });
-    console.log(pelatihan)
 
-    // Master data creation for CPD per PK Level
-    const masterCPD_PK1 = await prisma.masterCPD_PK1.createMany({
-        data: [
-            { value: 'Basic Life Support (BLS)' },
-            { value: 'Pengkajian Dasar' },
-            { value: 'Prosedur Perawatan Dasar' },
-            { value: 'Pelayanan Kesehatan Dasar' },
-            { value: 'Asuhan Keperawatan Keluarga' },
-            { value: 'Triage Keperawatan' },
-        ]
+    const jsonDataPelatihan: any[] = XLSX.utils.sheet_to_json(workbookmaster.Sheets["orientasi"]);
+    const pelatihanData = jsonDataPelatihan.map(record => ({
+        value: record.Nama
+    }));
+
+    // Masukkan data orientasi secara massal dengan createMany
+    await prisma.masterPelatihan.createMany({
+        data: pelatihanData,
+        skipDuplicates: true, // Mengabaikan duplikasi jika ada
     });
-    console.log(masterCPD_PK1)
-
-    const masterCPD_PK2 = await prisma.masterCPD_PK2.createMany({
-        data: [
-            { value: 'Asuhan Keperawatan Medikal Bedah' },
-            { value: 'Keperawatan Gawat Darurat Dasar' },
-            { value: 'Pengkajian Keperawatan Lanjut' },
-            { value: 'Penggunaan Alat Kesehatan Dasar' },
-            { value: 'Keperawatan Penyakit Tidak Menular' },
-            { value: 'Asuhan Keperawatan Lansia' },
-        ]
-    });
-    console.log(masterCPD_PK2)
-
-    const masterCPD_PK3 = await prisma.masterCPD_PK3.createMany({
-        data: [
-            { value: 'Keperawatan Bencana Dasar' },
-            { value: 'Keperawatan Bencana Lanjut' },
-            { value: 'Manajemen Bencana' },
-            { value: 'Keperawatan Kritis Lanjut' },
-            { value: 'Audit Asuhan Keperawatan' },
-            { value: 'Asuhan Keperawatan Kardiovaskular' },
-        ]
-    });
-    console.log(masterCPD_PK3)
-
-    const masterCPD_PK4 = await prisma.masterCPD_PK4.createMany({
-        data: [
-            { value: 'Asuhan Keperawatan Spesialistik' },
-            { value: 'Keperawatan Gawat Darurat Lanjut' },
-            { value: 'Keperawatan Kritis Lanjut' },
-            { value: 'Asuhan Keperawatan Anak' },
-            { value: 'Asuhan Keperawatan Obstetri' },
-            { value: 'Asuhan Keperawatan Neurologi' },
-        ]
-    });
-    console.log(masterCPD_PK4)
-
-    const masterCPD_PK5 = await prisma.masterCPD_PK5.createMany({
-        data: [
-            { value: 'Asuhan Keperawatan Sub Spesialis' },
-            { value: 'Keterampilan Klinis Sub Spesialis' },
-            { value: 'Manajemen Asuhan Keperawatan di RS' },
-            { value: 'Manajemen Strategi Asuhan Keperawatan' },
-            { value: 'Manajemen Konseling' },
-            { value: 'Metodologi Pendidikan Kesehatan Sasaran Masyarakat Kompleks' },
-            { value: 'Metodologi Riset Lanjut' },
-        ]
-    });
-    console.log(masterCPD_PK5)
 
 
+    const jsonDataCPD: any[] = XLSX.utils.sheet_to_json(workbookmaster.Sheets["cpd"]);
+    // Loop melalui data dan masukkan ke tabel yang sesuai
+    for (const record of jsonDataCPD) {
+        if (record.pk === 'pk1') {
+            await prisma.masterCPD_PK1.create({
+                data: {
+                    value: record.Keterampilan,
+                },
+            });
+        } else if (record.pk === 'pk2') {
+            await prisma.masterCPD_PK2.create({
+                data: {
+                    value: record.Keterampilan,
+                },
+            });
+        } else if (record.pk === 'pk3') {
+            await prisma.masterCPD_PK3.create({
+                data: {
+                    value: record.Keterampilan,
+                },
+            });
+        } else if (record.pk === 'pk4') {
+            await prisma.masterCPD_PK4.create({
+                data: {
+                    value: record.Keterampilan,
+                },
+            });
+        } else if (record.pk === 'pk5') {
+            await prisma.masterCPD_PK5.create({
+                data: {
+                    value: record.Keterampilan,
+                },
+            });
+        } else {
+            console.error(`Invalid pk: ${record.pk}`);
+        }
+    }
 
-    console.log('Data has been seeded');
+    // console.log(akun)
+
 }
 
 main()

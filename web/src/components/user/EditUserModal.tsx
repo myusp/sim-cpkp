@@ -31,9 +31,11 @@ interface EditUserModalProps {
         orientasi?: number[];
         pelatihan?: number[];
     };
+    title?: string
+    is_edit_by_personal?: boolean
 }
 
-const EditUserModal: React.FC<EditUserModalProps> = ({ visible, onCancel, onOk, initialValues }) => {
+const EditUserModal: React.FC<EditUserModalProps> = ({ visible, onCancel, onOk, initialValues, is_edit_by_personal = false, title = "Edit User" }) => {
     const [form] = Form.useForm<UpdateUserRequest>();
     const [cpdList, setCpdList] = useState<Record<string, { id: number; value: string }[]>>({});
     const [orientasiList, setOrientasiList] = useState<{ id: number; value: string }[]>([]);
@@ -138,7 +140,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ visible, onCancel, onOk, 
 
     return (
         <Modal
-            title="Edit User"
+            title={title}
             open={visible}
             onOk={() => {
                 form
@@ -147,7 +149,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ visible, onCancel, onOk, 
                         setLoading(true)
                         onOk(values as never);
                     })
-                    // .finally(() => setLoading(false));
+                // .finally(() => setLoading(false));
             }}
             onCancel={() => {
                 form.resetFields();
@@ -169,7 +171,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ visible, onCancel, onOk, 
                         label="Nama User"
                         rules={[{ required: true, message: 'Silakan masukkan nama user' }]}
                     >
-                        <Input />
+                        <Input disabled={is_edit_by_personal} />
                     </Form.Item>
                     <Form.Item
                         name="email"
@@ -183,26 +185,26 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ visible, onCancel, onOk, 
                         label="Role"
                         rules={[{ required: true, message: 'Silakan pilih role user' }]}
                     >
-                        <RoleDropdown />
+                        <RoleDropdown disabled={is_edit_by_personal} />
                     </Form.Item>
                     <Form.Item
                         name={['akun', 'pendidikanTerakhir']}
                         label="Pendidikan Terakhir"
                         rules={[{ required: true, message: 'Silakan pilih pendidikan terakhir' }]}
                     >
-                        <LastEducationDropdown />
+                        <LastEducationDropdown disabled={is_edit_by_personal} />
                     </Form.Item>
                     <Form.Item
                         name={['akun', 'masterRumahSakitId']}
                         label="Rumah Sakit"
                     >
-                        <HospitalDropdown />
+                        <HospitalDropdown disabled={is_edit_by_personal} />
                     </Form.Item>
                     <Form.Item
                         name={['akun', 'masterRuanganRSId']}
                         label="Ruangan"
                     >
-                        <RoomDropdown hospitalId={form.getFieldValue(['akun', 'masterRumahSakitId'])} />
+                        <RoomDropdown disabled={is_edit_by_personal} hospitalId={form.getFieldValue(['akun', 'masterRumahSakitId'])} />
                     </Form.Item>
 
                     {/* Informasi Pribadi User */}

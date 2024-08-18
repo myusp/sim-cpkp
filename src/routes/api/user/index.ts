@@ -1,3 +1,4 @@
+import { PendidikanTerakhir } from "@prisma/client"
 import { Akun, JwtPayload, User } from "app-type/index"
 import { CreateUserRequest, UpdateUserRequest, UserByEmailRequest, UserResetPassRequest, UserSearchRequest } from "app-type/request"
 import { UserResponse, ErrorResponse, UpdateUserResponse, UserResetPassResponse, UserSearchResponse } from "app-type/response"
@@ -18,6 +19,8 @@ const user: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                 pendidikanTerakhir: true,
                 unitTempatBekerjaTerakhir: true,
                 MasterRuanganRS: true,
+                MasterRumahSakit: true,
+                masterRuanganRSId: true,
                 masterRumahSakitId: true,
                 created_at: true,
                 nama: true
@@ -78,7 +81,7 @@ const user: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                         password: hashedPassword,  // Menggunakan password yang sudah di-hash
                         nama: data.nama,
                         role: data.role,
-                        pendidikanTerakhir: data.pendidikanTerakhir as "NERS" | "VOKASI" | "S2_NERS",
+                        pendidikanTerakhir: data.pendidikanTerakhir as PendidikanTerakhir,
                         unitTempatBekerjaTerakhir: data.unitTempatBekerjaTerakhir,
                         userId: data.userId,
                         masterRumahSakitId: data.masterRumahSakitId,
@@ -117,7 +120,7 @@ const user: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                                 nama: data.akun.nama,
                                 masterRuanganRSId: data.akun.masterRuanganRSId,
                                 masterRumahSakitId: data.akun.masterRumahSakitId,
-                                pendidikanTerakhir: data.akun.pendidikanTerakhir as "NERS" | "VOKASI" | "S2_NERS",
+                                pendidikanTerakhir: data.akun.pendidikanTerakhir as PendidikanTerakhir,
                                 unitTempatBekerjaTerakhir: data.akun.unitTempatBekerjaTerakhir,
                             },
                         })

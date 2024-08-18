@@ -9,22 +9,17 @@ const { Option } = Select;
 interface HospitalDropdownProps {
     value?: string;
     onChange?: (hospitalId: string) => void;
+    disabled?: boolean
 }
 
-const HospitalDropdown: React.FC<HospitalDropdownProps> = ({ onChange, value }) => {
+const HospitalDropdown: React.FC<HospitalDropdownProps> = ({ onChange, value, disabled }) => {
     const [hospitals, setHospitals] = useState<MasterRumahSakit[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const mounted = useMounted();
 
     useEffect(() => {
         if (mounted) {
-            const cachedHospitals = localStorage.getItem('hospitals');
-            if (cachedHospitals) {
-                setHospitals(JSON.parse(cachedHospitals));
-                setLoading(false);
-            } else {
-                fetchHospitals();
-            }
+            fetchHospitals();
         }
     }, [mounted]);
 
@@ -49,6 +44,7 @@ const HospitalDropdown: React.FC<HospitalDropdownProps> = ({ onChange, value }) 
             className="w-full"
             value={value}
             allowClear
+            disabled={disabled}
         >
             {hospitals.map((hospital) => (
                 <Option key={hospital.id} value={hospital.id}>

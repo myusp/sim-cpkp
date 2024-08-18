@@ -1,4 +1,4 @@
-import { Akun, MasterRuanganRS, MasterRumahSakit, User, UserCPD_PK1, UserCPD_PK2, UserCPD_PK3, UserCPD_PK4, UserCPD_PK5, UserOrientasi, UserPelatihan } from "."
+import { Akun, MasterPertanyaanAssesmen, MasterRuanganRS, MasterRumahSakit, User, UserCPD_PK1, UserCPD_PK2, UserCPD_PK3, UserCPD_PK4, UserCPD_PK5, UserOrientasi, UserPelatihan } from "."
 
 export type LoginResponse = {
     token: string
@@ -100,3 +100,8 @@ export interface UserDetails extends User {
     orientasiYangDiikuti: UserOrientasi[];
     pelatihanYangDiikuti: UserPelatihan[];
 }
+
+
+export type MasterPertanyaanResponse = MasterPertanyaanAssesmen;
+
+export type MasterPertanyaanActiveResponse = Omit<MasterPertanyaanAssesmen, 'vokasi' | 'ners'>;

@@ -9,9 +9,10 @@ interface RoomDropdownProps {
     hospitalId?: string | undefined;
     onChange?: (roomId: string) => void;
     value?: string
+    disabled?: boolean
 }
 
-const RoomDropdown: React.FC<RoomDropdownProps> = ({ hospitalId, onChange, value }) => {
+const RoomDropdown: React.FC<RoomDropdownProps> = ({ hospitalId, onChange, value, disabled }) => {
     const [rooms, setRooms] = useState<MasterRuanganRS[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -43,6 +44,7 @@ const RoomDropdown: React.FC<RoomDropdownProps> = ({ hospitalId, onChange, value
             className="w-full"
             allowClear
             value={value}
+            disabled={disabled}
         >
             {rooms.map((room) => (
                 <Option key={room.id} value={room.id}>
