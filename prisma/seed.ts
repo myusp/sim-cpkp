@@ -18,7 +18,7 @@ function makeUrlSafeRole(role: string) {
 
 function makeUrlSafePendidkan(p: string) {
     if (p == undefined) return null
-    return p.toUpperCase().replace(/\s+/g, '_') as PendidikanTerakhir 
+    return p.toUpperCase().replace(/\s+/g, '_') as PendidikanTerakhir
 }
 
 
@@ -40,10 +40,10 @@ async function main() {
             return {
                 skp: skp as string,
                 sub_kategori,
-                kode,
+                kode: `${kode}`,
                 keterampilan,
-                vokasi,
-                ners,
+                vokasi: `${vokasi}`,
+                ners: `${ners}`,
                 priority,
                 tipe,
                 status: 1
@@ -188,6 +188,27 @@ async function main() {
         }
     }
 
+    await prisma.akun.update({
+        data: { masterRumahSakitId: null, masterRuanganRSId: null },
+        where: {
+            email: "admin@gmail.com"
+        }
+    })
+
+    await prisma.masterRuanganRS.deleteMany({
+        where: {
+            nama: {
+                contains: "null"
+            }
+        }
+    })
+    await prisma.masterRumahSakit.deleteMany({
+        where: {
+            nama: {
+                contains: "null"
+            }
+        }
+    })
     // console.log(akun)
 
 }
