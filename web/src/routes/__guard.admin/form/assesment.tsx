@@ -165,7 +165,7 @@ const PertanyaanManager: React.FC = () => {
       key: 'action',
       fixed: "right",
       width: 100,
-      render: (text: string, record: MasterPertanyaanAssesmen) => (
+      render: (_text: string, record: MasterPertanyaanAssesmen) => (
         <Space size="small">
           <Button icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           <Popconfirm title="Yakin ingin menghapus?" onConfirm={() => handleDelete(record.id)}>
@@ -226,7 +226,7 @@ const PertanyaanManager: React.FC = () => {
       </div>
       <Table
         scroll={{ x: 1000 }}
-        columns={columns}
+        columns={columns as never}
         dataSource={filteredList}
         rowKey={(k) => `${k.id}`}
         loading={loading}

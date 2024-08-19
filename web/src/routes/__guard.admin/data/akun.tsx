@@ -152,7 +152,7 @@ const UserManagement: React.FC = () => {
       key: 'action',
       fixed: "right",
       width: 150,
-      render: (text: string, record: UserResponse) => (
+      render: (_text: string, record: UserResponse) => (
         <Space size="small">
           <Button icon={<EditOutlined />} onClick={() => openEditModal(record)} />
           <Popconfirm title="Yakin ingin menghapus?" onConfirm={() => handleDeleteUser(record.iduser)}>

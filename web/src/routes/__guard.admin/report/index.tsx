@@ -118,7 +118,7 @@ const Report = () => {
             key: 'action',
             fixed: "right",
             width: 150,
-            render: (text: string, record) => (
+            render: (_text: string, record) => (
                 <Space size="small">
                     <Button icon={<EyeOutlined />} onClick={() => {
                         navigate({ to: "/admin/report/$id", params: { id: record.assesmen.id } })

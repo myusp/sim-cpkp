@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Modal, Tabs, Button } from 'antd';
 import { BookOutlined } from '@ant-design/icons';
 

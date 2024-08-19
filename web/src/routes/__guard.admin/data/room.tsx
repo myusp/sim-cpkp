@@ -112,7 +112,7 @@ const RoomManagement: React.FC = () => {
         {
             title: 'Aksi',
             key: 'action',
-            render: (text: string, record: MasterRuanganRS) => (
+            render: (_text: string, record: MasterRuanganRS) => (
                 <Space size="middle">
                     <Button icon={<EditOutlined />} onClick={() => handleEdit(record)} />
                     <Popconfirm title="Yakin ingin menghapus?" onConfirm={() => handleDelete(record.id)}>

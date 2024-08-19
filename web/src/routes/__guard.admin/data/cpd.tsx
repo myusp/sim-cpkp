@@ -134,7 +134,7 @@ const CpdManager: React.FC = () => {
     {
       title: 'Aksi',
       key: 'action',
-      render: (text: string, record: CpdResponse) => (
+      render: (_text: string, record: CpdResponse) => (
         <Space size="middle">
           <Button icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           <Popconfirm title="Yakin ingin menghapus?" onConfirm={() => handleDelete(record.id, record.pk)}>

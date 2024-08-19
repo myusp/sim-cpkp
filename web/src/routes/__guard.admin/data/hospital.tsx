@@ -94,7 +94,7 @@ const Hospital: React.FC = () => {
     {
       title: 'Aksi',
       key: 'action',
-      render: (text: string, record: HospitalResponse) => (
+      render: (_text: string, record: HospitalResponse) => (
         <Space size="middle">
           <Button icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           <Popconfirm title="Yakin ingin menghapus?" onConfirm={() => handleDelete(record.id)}>
