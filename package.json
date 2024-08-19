@@ -39,6 +39,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/lodash": "^4.17.7",
     "@types/node": "^20.4.4",
+    "bestzip": "^2.2.1",
     "c8": "^10.1.2",
     "concurrently": "^8.2.2",
     "fastify-tsconfig": "^2.0.0",
