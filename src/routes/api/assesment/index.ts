@@ -256,24 +256,10 @@ const assessment: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             const assessment = await prisma.userAssesmen.findMany({
                 where: {
                     AND: [
-                        email ? {
-                            Akun: {
-                                email
-                            },
-                        } : {},
-                        rumahSakitId ? {
-                            Akun: {
-                                masterRumahSakitId: ruanganRSId
-                            }
-                        } : {},
-                        ruanganRSId ? {
-                            Akun: {
-                                masterRuanganRSId: ruanganRSId
-                            }
-                        } : {}
-                    ]
-
-
+                        email ? { Akun: { email } } : {},
+                        rumahSakitId ? { Akun: { masterRumahSakitId: rumahSakitId } } : {},
+                        ruanganRSId ? { Akun: { masterRuanganRSId: ruanganRSId } } : {}
+                    ],
                 },
                 include: {
                     Akun: {
@@ -316,25 +302,6 @@ const assessment: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         return ''; // Default if no match
     }
 
-    // Utility function to calculate summary score
-    function calculateSummary(jawaban: Array<any>): {
-        skp_1: number;
-        skp_2: number;
-        skp_3: number;
-        skp_4: number;
-        skp_5: number;
-        skp_6: number;
-    } {
-        // Implement calculation logic based on your requirements
-        return {
-            skp_1: jawaban.filter(j => j.skp === 1 && j.skor === 1).length,
-            skp_2: jawaban.filter(j => j.skp === 2 && j.skor === 1).length,
-            skp_3: jawaban.filter(j => j.skp === 3 && j.skor === 1).length,
-            skp_4: jawaban.filter(j => j.skp === 4 && j.skor === 1).length,
-            skp_5: jawaban.filter(j => j.skp === 5 && j.skor === 1).length,
-            skp_6: jawaban.filter(j => j.skp === 6 && j.skor === 1).length,
-        };
-    }
 };
 
 export default assessment;

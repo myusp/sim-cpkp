@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate } from '@tanstack/react-router';
-import { HomeOutlined, BellOutlined, BookOutlined, UserOutlined, ReadOutlined, MenuOutlined, LogoutOutlined } from '@ant-design/icons';
+import { HomeOutlined, BellOutlined, BookOutlined, UserOutlined, ReadOutlined, MenuOutlined, LogoutOutlined, DotChartOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, theme, Image, Badge, Button, Drawer, Dropdown, message } from 'antd';
 import UserAvatar from '@/components/UserAvatar';
@@ -64,6 +64,11 @@ const menuAdmin: MenuProps['items'] = [
             },
         ],
         icon: <BookOutlined />
+    },
+    {
+        key: "/admin/report",
+        label: <Link to='/admin/report'>Report</Link>,
+        icon: <DotChartOutlined />
     }
 ];
 

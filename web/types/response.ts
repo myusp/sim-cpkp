@@ -125,5 +125,5 @@ export interface UserAssessmentViewResponse {
 }
 
 export interface UserAssessmentListResponse {
-    data: { assesmen: UserAssesmen, akun: Akun }[]
+    data: { assesmen: UserAssesmen, akun: Akun & { MasterRumahSakit?: MasterRumahSakit, MasterRuanganRS?: MasterRuanganRS } }[]
 }
