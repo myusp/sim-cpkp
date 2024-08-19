@@ -75,6 +75,27 @@ export type UserSearchRequest = {
     role?: string;     // ID Ruangan untuk filter
 };
 
+// src/types/request.ts
+export interface UserAssessmentParams {
+    id: string;
+}
+
+export interface UserAssessmentCreateRequest {
+    id_master_pertanyaans: string[];
+    answers: { id: number, answer: string }[];
+}
+
+export interface UserAssessmentUpdateRequest {
+    id_user_assesmen: string
+    answers: { id: number, answer: string }[];
+}
+
+export interface UserAssessmentListParams {
+    email?: string
+    rumahSakitId?: string
+    ruanganRSId?: string
+}
+
 
 export type MasterPertanyaanCreateRequest = Omit<MasterPertanyaanAssesmen, 'id' | 'created_at' | 'updated_at'>;
 

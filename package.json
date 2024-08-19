@@ -31,11 +31,13 @@
     "fastify": "^4.26.1",
     "fastify-cli": "^6.3.0",
     "fastify-plugin": "^4.0.0",
+    "lodash": "^4.17.21",
     "ulid": "^2.3.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/lodash": "^4.17.7",
     "@types/node": "^20.4.4",
     "c8": "^10.1.2",
     "concurrently": "^8.2.2",

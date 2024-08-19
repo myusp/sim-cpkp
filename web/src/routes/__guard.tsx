@@ -199,7 +199,7 @@ const GuardSession = () => {
                         is_edit_by_personal
                         title='Edit Profil'
                     />
-                    <Badge className='mr-4' size="small" count={5}>
+                    <Badge className='mr-4' size="small">
                         <BellOutlined style={{ fontSize: 25, color: "white" }} />
                     </Badge>
                     <Dropdown

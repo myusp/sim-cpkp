@@ -20,12 +20,14 @@ import { Route as guardPerawatIndexImport } from './routes/__guard.perawat/index
 import { Route as guardKaruIndexImport } from './routes/__guard.karu/index'
 import { Route as guardAdminIndexImport } from './routes/__guard.admin/index'
 import { Route as guardPerawatSelfAssesmenIndexImport } from './routes/__guard.perawat/self-assesmen/index'
+import { Route as guardPerawatSelfAssesmenNewImport } from './routes/__guard.perawat/self-assesmen/new'
 import { Route as guardAdminFormPenilaianImport } from './routes/__guard.admin/form/penilaian'
 import { Route as guardAdminFormAssesmentImport } from './routes/__guard.admin/form/assesment'
 import { Route as guardAdminDataRoomImport } from './routes/__guard.admin/data/room'
 import { Route as guardAdminDataHospitalImport } from './routes/__guard.admin/data/hospital'
 import { Route as guardAdminDataCpdImport } from './routes/__guard.admin/data/cpd'
 import { Route as guardAdminDataAkunImport } from './routes/__guard.admin/data/akun'
+import { Route as guardPerawatSelfAssesmenEditIdImport } from './routes/__guard.perawat/self-assesmen/edit/$id'
 
 // Create Virtual Routes
 
@@ -74,6 +76,12 @@ const guardPerawatSelfAssesmenIndexRoute =
     getParentRoute: () => guardRoute,
   } as any)
 
+const guardPerawatSelfAssesmenNewRoute =
+  guardPerawatSelfAssesmenNewImport.update({
+    path: '/perawat/self-assesmen/new',
+    getParentRoute: () => guardRoute,
+  } as any)
+
 const guardAdminFormPenilaianRoute = guardAdminFormPenilaianImport.update({
   path: '/admin/form/penilaian',
   getParentRoute: () => guardRoute,
@@ -103,6 +111,12 @@ const guardAdminDataAkunRoute = guardAdminDataAkunImport.update({
   path: '/admin/data/akun',
   getParentRoute: () => guardRoute,
 } as any)
+
+const guardPerawatSelfAssesmenEditIdRoute =
+  guardPerawatSelfAssesmenEditIdImport.update({
+    path: '/perawat/self-assesmen/edit/$id',
+    getParentRoute: () => guardRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -199,11 +213,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof guardAdminFormPenilaianImport
       parentRoute: typeof guardImport
     }
+    '/__guard/perawat/self-assesmen/new': {
+      id: '/__guard/perawat/self-assesmen/new'
+      path: '/perawat/self-assesmen/new'
+      fullPath: '/perawat/self-assesmen/new'
+      preLoaderRoute: typeof guardPerawatSelfAssesmenNewImport
+      parentRoute: typeof guardImport
+    }
     '/__guard/perawat/self-assesmen/': {
       id: '/__guard/perawat/self-assesmen/'
       path: '/perawat/self-assesmen'
       fullPath: '/perawat/self-assesmen'
       preLoaderRoute: typeof guardPerawatSelfAssesmenIndexImport
+      parentRoute: typeof guardImport
+    }
+    '/__guard/perawat/self-assesmen/edit/$id': {
+      id: '/__guard/perawat/self-assesmen/edit/$id'
+      path: '/perawat/self-assesmen/edit/$id'
+      fullPath: '/perawat/self-assesmen/edit/$id'
+      preLoaderRoute: typeof guardPerawatSelfAssesmenEditIdImport
       parentRoute: typeof guardImport
     }
   }
@@ -223,7 +251,9 @@ export const routeTree = rootRoute.addChildren({
     guardAdminDataRoomRoute,
     guardAdminFormAssesmentRoute,
     guardAdminFormPenilaianRoute,
+    guardPerawatSelfAssesmenNewRoute,
     guardPerawatSelfAssesmenIndexRoute,
+    guardPerawatSelfAssesmenEditIdRoute,
   }),
   AboutRoute,
   LoginRoute,
@@ -258,7 +288,9 @@ export const routeTree = rootRoute.addChildren({
         "/__guard/admin/data/room",
         "/__guard/admin/form/assesment",
         "/__guard/admin/form/penilaian",
-        "/__guard/perawat/self-assesmen/"
+        "/__guard/perawat/self-assesmen/new",
+        "/__guard/perawat/self-assesmen/",
+        "/__guard/perawat/self-assesmen/edit/$id"
       ]
     },
     "/about": {
@@ -303,8 +335,16 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__guard.admin/form/penilaian.tsx",
       "parent": "/__guard"
     },
+    "/__guard/perawat/self-assesmen/new": {
+      "filePath": "__guard.perawat/self-assesmen/new.tsx",
+      "parent": "/__guard"
+    },
     "/__guard/perawat/self-assesmen/": {
       "filePath": "__guard.perawat/self-assesmen/index.tsx",
+      "parent": "/__guard"
+    },
+    "/__guard/perawat/self-assesmen/edit/$id": {
+      "filePath": "__guard.perawat/self-assesmen/edit/$id.tsx",
       "parent": "/__guard"
     }
   }

@@ -235,7 +235,7 @@ model UserAssesmen {
   skp_5                 String?
   skp_6                 String?
   email                 String
-  id_master_pertanyaans String?
+  id_master_pertanyaans String?  @db.Text
   id_penilaian          String?
   created_at            DateTime @default(now())
   updated_at            DateTime @updatedAt

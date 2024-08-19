@@ -1,4 +1,4 @@
-import { Akun, MasterPertanyaanAssesmen, MasterRuanganRS, MasterRumahSakit, User, UserCPD_PK1, UserCPD_PK2, UserCPD_PK3, UserCPD_PK4, UserCPD_PK5, UserOrientasi, UserPelatihan } from "."
+import { Akun, MasterPertanyaanAssesmen, MasterRuanganRS, MasterRumahSakit, User, UserAssesmen, UserCPD_PK1, UserCPD_PK2, UserCPD_PK3, UserCPD_PK4, UserCPD_PK5, UserOrientasi, UserPelatihan } from "."
 
 export type LoginResponse = {
     token: string
@@ -105,3 +105,25 @@ export interface UserDetails extends User {
 export type MasterPertanyaanResponse = MasterPertanyaanAssesmen;
 
 export type MasterPertanyaanActiveResponse = Omit<MasterPertanyaanAssesmen, 'vokasi' | 'ners'>;
+
+export interface UserAssessmentResponse {
+    id: string;
+    skp_1: number;
+    skp_2: number;
+    skp_3: number;
+    skp_4: number;
+    skp_5: number;
+    skp_6: number;
+    id_master_pertanyaans: string[];
+    answers: { id: number, answer: string }[];
+}
+
+export interface UserAssessmentViewResponse {
+    assesmen: UserAssesmen
+    answer: { answer: string, id: number }[],
+    questions: Omit<MasterPertanyaanAssesmen, "created_at" | "updated_at" | "status">[]
+}
+
+export interface UserAssessmentListResponse {
+    data: { assesmen: UserAssesmen, akun: Akun }[]
+}

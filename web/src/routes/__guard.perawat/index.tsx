@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { Button, Flex, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useAppContext } from '@/context';
+import { VideoCameraAddOutlined } from '@ant-design/icons';
 
 const { Title, Paragraph } = Typography;
 
@@ -15,6 +16,11 @@ const PerawatIndexPage = () => {
     if (hour < 18) return 'Selamat sore';
     return 'Selamat malam';
   };
+
+  const openTutorial = () => {
+    const url = 'https://youtube.com';
+    window.open(url, '_blank');
+  }
 
   return (
     <div className="flex flex-col items-center justify-center pt-6">
@@ -34,6 +40,10 @@ const PerawatIndexPage = () => {
         <Flex justify='center'>
           <Button >
             <Link to="/perawat/self-assesmen">Self Asesmen</Link>
+
+          </Button>
+          <Button onClick={openTutorial} className='ml-2' type='primary' icon={<VideoCameraAddOutlined />}>
+            Tutorial
           </Button>
         </Flex>
 
