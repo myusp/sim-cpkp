@@ -8,6 +8,7 @@ import { Button, Col, Row, Space, Table } from 'antd'
 import { ColumnType } from 'antd/es/table'
 import { Akun, UserAssesmen } from 'app-type/index'
 import dayjs from 'dayjs'
+import { debounce } from 'lodash'
 import { useEffect, useState } from 'react'
 
 
@@ -18,8 +19,13 @@ const SelfAssesmenIndex = () => {
   const navigate = Route.useNavigate()
 
   useEffect(() => {
-    if (mounted) fetchList()
-  }, [mounted])
+    const fn = debounce(() => {
+      if (mounted) fetchList()
+    }, 400)
+    fn()
+    return fn.cancel
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mounted, user?.email])
 
   const fetchList = () => {
     listAssesmen({ email: user?.email })
