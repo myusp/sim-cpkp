@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 // Membuat instance Axios
 const axiosInstance = axios.create({
@@ -32,7 +32,7 @@ axiosInstance.interceptors.response.use(
         // Jika response sukses (status 2xx), langsung kembalikan response
         return response;
     },
-    (error) => {
+    (error: AxiosError<{ error?: string, message?: string }>) => {
         // Jika response error
         if (error.response) {
             // Server merespon dengan status kode di luar 2xx
@@ -46,9 +46,9 @@ axiosInstance.interceptors.response.use(
             } else if (statusCode === 404) {
                 message.error('Not Found! The resource you are looking for does not exist.');
             } else if (statusCode === 500) {
-                message.error('Internal Server Error! Something went wrong on the server.');
+                message.error(error.response.data?.error || 'Internal Server Error! Something went wrong on the server.');
             } else {
-                message.error(`Error ${statusCode}: ${error.response.data.message || 'An error occurred'}`);
+                message.error(`Error ${statusCode}: ${error.response.data?.message || 'An error occurred'}`);
             }
 
             // Atau, Anda bisa menggunakan console.log

@@ -128,7 +128,7 @@ const RenderSoals: FC<{ soals: MasterPertanyaanActiveResponse[] }> = ({ soals = 
                 loadingHandler.close()
             }
             asy()
-   
+
         }, 700)
         fn()
         return () => {
@@ -141,6 +141,7 @@ const RenderSoals: FC<{ soals: MasterPertanyaanActiveResponse[] }> = ({ soals = 
             setSkp5({})
             setSkp6({})
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [soals, debounceSarch])
 
     return <Spin spinning={loading} className='min-h-10' delay={0}>
@@ -177,6 +178,7 @@ const PerawatSelfAsesmenEdit = () => {
                 message.error(err)
             }).finally(loadingHandler.close)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mounted, id])
 
     const handleAnswer = (d: Answer) => {
@@ -203,6 +205,7 @@ const PerawatSelfAsesmenEdit = () => {
             message.success("Berhasil mengupdate self-assesmen")
         }).catch(err => {
             console.log(err, "err")
+            message.error(err)
         }).finally(loadingSubmitHandler.close)
     }
 

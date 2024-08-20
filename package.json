@@ -12,7 +12,8 @@
     "build:ts": "tsc",
     "watch:ts": "tsc -w",
     "dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
-    "dev:start": "fastify start --host=0.0.0.0 --port=3000 --ignore-watch=.ts$ -w -l info -P dist/src/app.js"
+    "dev:start": "fastify start --host=0.0.0.0 --port=3000 --ignore-watch=.ts$ -w -l info -P dist/src/app.js",
+    "build-prod": "cd ./web yarn build && cd .. && yarn build:ts && npx bestzip dist dist"
   },
   "keywords": [],
   "author": "",

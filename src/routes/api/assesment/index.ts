@@ -38,7 +38,7 @@ const assessment: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             }
 
             if (existingAssessment) {
-                reply.status(500).send({ error: "Please do update request" })
+                reply.status(500).send({ error: "Anda sudah mengisi self-asesmen hari ini, silakan klik menu self asesmen untuk melakukan update" })
             } else {
                 // Get all active questions by IDs
                 const activeQuestions = await prisma.masterPertanyaanAssesmen.findMany({

@@ -4,7 +4,7 @@ import { getActivePertanyaan } from '@/services/pertanyaan'
 import { CloseCircleTwoTone, SaveOutlined } from '@ant-design/icons'
 import { useDebouncedValue, useDisclosure, useMounted } from '@mantine/hooks'
 import { createFileRoute } from '@tanstack/react-router'
-import { Button, Col, Collapse, Flex, Input, InputRef, List, Radio, RadioChangeEvent, Row, Spin, Tooltip, Typography } from 'antd'
+import { Button, Col, Collapse, Flex, Input, InputRef, List, message, Radio, RadioChangeEvent, Row, Spin, Tooltip, Typography } from 'antd'
 import { MasterPertanyaanActiveResponse } from 'app-type/response'
 import { debounce, groupBy, orderBy } from 'lodash'
 import { createContext, FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
@@ -137,6 +137,7 @@ const RenderSoals: FC<{ soals: MasterPertanyaanActiveResponse[] }> = ({ soals = 
             setSkp5({})
             setSkp6({})
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [soals, debounceSarch])
 
     return <Spin spinning={loading} className='min-h-10'>
@@ -158,6 +159,7 @@ const PerawatSelfAsesmenNew = () => {
     const searchRef = useRef<InputRef>(null)
 
     const mounted = useMounted()
+    const navigate = Route.useNavigate()
 
     useEffect(() => {
         if (mounted) {
@@ -189,8 +191,10 @@ const PerawatSelfAsesmenNew = () => {
             id_master_pertanyaans: listSoal.map(s => `${s.id}`)
         }).then(res => {
             console.log(res)
+            message.success("Berhasil membuat self assesmen baru")
+            navigate({ to: "/perawat/self-assesmen" })
         }).catch(err => {
-            console.log(err, "err")
+            message.error(err)
         }).finally(loadingSubmitHandler.close)
     }
 
