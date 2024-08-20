@@ -117,6 +117,7 @@ const SelfAssesmenIndex = () => {
         </Col>
         <Col span={24}>
           <Table
+            scroll={{ x: 1000 }}
             columns={columns}
             dataSource={data}
           />
