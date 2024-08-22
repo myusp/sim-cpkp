@@ -229,7 +229,7 @@ const PerawatSelfAsesmenNew = () => {
                 <DatePicker
                     disabledDate={current => {
                         return current
-                            && (current > dayjs().endOf('day') || current < dayjs("2024-08-01").startOf("day"))
+                            && (current > dayjs().endOf('day') || current < dayjs("2024-05-01").startOf("day"))
                     }}
                     value={selectedDate} onChange={d => setSelectedDate(d)} />
             </Col>
