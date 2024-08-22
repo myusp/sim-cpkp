@@ -1,7 +1,6 @@
 import AssessmentExplanationModal from '@/components/AssessmentExplanationModal'
-import { submitAssessment } from '@/services/asesment'
-import { getActivePertanyaan } from '@/services/pertanyaan'
-import { CloseCircleTwoTone, SaveOutlined } from '@ant-design/icons'
+import { viewAssesmen } from '@/services/asesment'
+import { BackwardOutlined, CloseCircleTwoTone } from '@ant-design/icons'
 import { useDebouncedValue, useDisclosure, useMounted } from '@mantine/hooks'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button, Col, Collapse, Flex, Input, InputRef, List, message, Radio, RadioChangeEvent, Row, Spin, Tooltip, Typography } from 'antd'
@@ -14,11 +13,12 @@ const Ctx = createContext<{
     listAnswer: Answer[],
     onAnswer?: (d: Answer) => void,
     searchText: string,
-    onRemove?: (id: number) => void
+    onRemove?: (id: number) => void,
+    enableEdit?: boolean
 }>({ listAnswer: [], searchText: "" })
 
 const OptionRadio: FC<{ id: number, tipe: string }> = ({ tipe = "", id = 0 }) => {
-    const { listAnswer, onAnswer, onRemove } = useContext(Ctx)
+    const { listAnswer, onAnswer, onRemove, enableEdit } = useContext(Ctx)
 
     const options = useMemo<string[]>(() => {
         if (tipe == "diagnosa") return ["4", "3B", "3A", "2", "1"]
@@ -42,10 +42,10 @@ const OptionRadio: FC<{ id: number, tipe: string }> = ({ tipe = "", id = 0 }) =>
     }
 
     return <Flex justify='start'>
-        <Radio.Group value={answer?.answer} onChange={handleChange}>
+        <Radio.Group disabled={!enableEdit} value={answer?.answer} onChange={handleChange}>
             {options.map(opt => <Radio key={opt} value={opt}>{opt}</Radio>)}
         </Radio.Group>
-        {answer &&
+        {answer && enableEdit &&
             <Tooltip placement='top' color='red' title="Hapus Jawaban">
                 <CloseCircleTwoTone twoToneColor={"red"} className='cursor-pointer' onClick={handleRemove} />
             </Tooltip>
@@ -101,30 +101,34 @@ const RenderSoals: FC<{ soals: MasterPertanyaanActiveResponse[] }> = ({ soals = 
     useEffect(() => {
         const fn = debounce(() => {
             loadingHandler.open()
-            const tmpSoals = soals.filter(s => s.keterampilan?.toLowerCase().includes(debounceSarch))
-            const groupByskpAndSubKategori = groupBy(tmpSoals, (s) => `${s.skp}_${s.sub_kategori}`)
-            Object.keys(groupByskpAndSubKategori).forEach(k => {
-                const [skp, kategori] = k.split("_")
-                if (skp === "SKP1") {
-                    setSkp1(s => ({ ...s, [kategori]: orderBy(groupByskpAndSubKategori[k], ["priority"]) }))
-                }
-                else if (skp === "SKP2") {
-                    setSkp2(s => ({ ...s, [kategori]: orderBy(groupByskpAndSubKategori[k], ["priority"]) }))
-                }
-                else if (skp === "SKP3") {
-                    setSkp3(s => ({ ...s, [kategori]: orderBy(groupByskpAndSubKategori[k], ["priority"]) }))
-                }
-                else if (skp === "SKP4") {
-                    setSkp4(s => ({ ...s, [kategori]: orderBy(groupByskpAndSubKategori[k], ["priority"]) }))
-                }
-                else if (skp === "SKP5") {
-                    setSkp5(s => ({ ...s, [kategori]: orderBy(groupByskpAndSubKategori[k], ["priority"]) }))
-                }
-                else if (skp === "SKP6") {
-                    setSkp6(s => ({ ...s, [kategori]: orderBy(groupByskpAndSubKategori[k], ["priority"]) }))
-                }
-            })
-            loadingHandler.close()
+            const asy = async () => {
+                const tmpSoals = soals.filter(s => s.keterampilan?.toLowerCase().includes(debounceSarch))
+                const groupByskpAndSubKategori = groupBy(tmpSoals, (s) => `${s.skp}_${s.sub_kategori}`)
+                Object.keys(groupByskpAndSubKategori).forEach(k => {
+                    const [skp, kategori] = k.split("_")
+                    if (skp === "SKP1") {
+                        setSkp1(s => ({ ...s, [kategori]: orderBy(groupByskpAndSubKategori[k], ["priority"]) }))
+                    }
+                    else if (skp === "SKP2") {
+                        setSkp2(s => ({ ...s, [kategori]: orderBy(groupByskpAndSubKategori[k], ["priority"]) }))
+                    }
+                    else if (skp === "SKP3") {
+                        setSkp3(s => ({ ...s, [kategori]: orderBy(groupByskpAndSubKategori[k], ["priority"]) }))
+                    }
+                    else if (skp === "SKP4") {
+                        setSkp4(s => ({ ...s, [kategori]: orderBy(groupByskpAndSubKategori[k], ["priority"]) }))
+                    }
+                    else if (skp === "SKP5") {
+                        setSkp5(s => ({ ...s, [kategori]: orderBy(groupByskpAndSubKategori[k], ["priority"]) }))
+                    }
+                    else if (skp === "SKP6") {
+                        setSkp6(s => ({ ...s, [kategori]: orderBy(groupByskpAndSubKategori[k], ["priority"]) }))
+                    }
+                })
+                loadingHandler.close()
+            }
+            asy()
+
         }, 700)
         fn()
         return () => {
@@ -137,10 +141,9 @@ const RenderSoals: FC<{ soals: MasterPertanyaanActiveResponse[] }> = ({ soals = 
             setSkp5({})
             setSkp6({})
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [soals, debounceSarch])
 
-    return <Spin spinning={loading} className='min-h-10'>
+    return <Spin spinning={loading} className='min-h-10' delay={0}>
         {/* <div className='h-16'></div> */}
         {Object.keys(skp1).length > 0 && <RenderSoal data={skp1} name='SKP1 (Mengidentifikasi  Pasien dengan Benar)' />}
         {Object.keys(skp2).length > 0 && <RenderSoal data={skp2} name='SKP2 (Meningkatkan Komunikasi yang Efektif)' />}
@@ -151,24 +154,27 @@ const RenderSoals: FC<{ soals: MasterPertanyaanActiveResponse[] }> = ({ soals = 
     </Spin>
 }
 
-const PerawatSelfAsesmenNew = () => {
+const ReportAssesmen = () => {
     const [listAnswer, setListAnswer] = useState<Answer[]>([])
     const [listSoal, setListSoal] = useState<MasterPertanyaanActiveResponse[]>([])
     const [searchText, setSearchText] = useState<string>("")
-    const [loadingSubmit, loadingSubmitHandler] = useDisclosure(false)
+    const [loading, loadingHandler] = useDisclosure(true)
     const searchRef = useRef<InputRef>(null)
-
-    const mounted = useMounted()
+    const { id } = Route.useParams()
     const navigate = Route.useNavigate()
 
+    const mounted = useMounted()
+
     useEffect(() => {
-        if (mounted) {
-            getActivePertanyaan().then(res => {
-                // console.log(res)
-                setListSoal(res)
-            })
+        if (mounted && id) {
+            viewAssesmen({ id }).then(res => {
+                setListSoal(res.questions as MasterPertanyaanActiveResponse[])
+                setListAnswer(res.answer)
+            }).catch(err => {
+                message.error(err)
+            }).finally(loadingHandler.close)
         }
-    }, [mounted])
+    }, [mounted, id])
 
     const handleAnswer = (d: Answer) => {
         setListAnswer(la => {
@@ -184,20 +190,6 @@ const PerawatSelfAsesmenNew = () => {
         })
     }
 
-    const handleSubmit = () => {
-        loadingSubmitHandler.open()
-        submitAssessment({
-            answers: listAnswer as unknown as { id: number, answer: string }[],
-            id_master_pertanyaans: listSoal.map(s => `${s.id}`)
-        }).then(res => {
-            console.log(res)
-            message.success("Berhasil membuat self assesmen baru")
-            navigate({ to: "/perawat/self-assesmen" })
-        }).catch(err => {
-            message.error(err)
-        }).finally(loadingSubmitHandler.close)
-    }
-
     const handleSearch = () => {
         setSearchText(searchRef.current?.input?.value as string)
     }
@@ -206,24 +198,58 @@ const PerawatSelfAsesmenNew = () => {
         setListAnswer(l => l.filter(la => la.id != id))
     }
 
-    return <Ctx.Provider value={{ listAnswer, onAnswer: handleAnswer, searchText: searchText, onRemove: handleRemove }}>
+    return <Ctx.Provider value={{ listAnswer, onAnswer: handleAnswer, searchText: searchText, onRemove: handleRemove, enableEdit: false }}>
         <Row className='mb-4' gutter={[16, 16]}>
-            <Col xs={24} md={18}>
+            {/* <Col span={24}>
+                    {enableEdit ?
+                        <Alert
+                            className='shadow'
+                            message="Perhatian"
+                            description="Untuk membatalkan perubahan dapat menekan tombol Batal Perubahan"
+                            type="warning"
+                            action={
+                                <Space direction="vertical">
+                                    <Button onClick={handleEditClick} size="small" type="default" color='red'>
+                                        Batal Perubahan
+                                    </Button>
+                                </Space>
+                            }
+                        />
+                        : <Alert
+                            className='shadow'
+                            message="Perhatian"
+                            description="Anda sedang melihat isian self assesmen. Untuk dapat memeperbarui isian silakan klik tombol Edit Self-Assesmen"
+                            type="info"
+                            action={
+                                <Space direction="vertical">
+                                    <Button onClick={handleEditClick} size="small" type="primary">
+                                        Edit Self-Assesmen
+                                    </Button>
+                                    <Button onClick={() => navigate({ to: "/perawat/self-assesmen" })} size="small" >
+                                        Kembali
+                                    </Button>
+                                </Space>
+                            }
+                        />
+
+                    }
+                </Col> */}
+            <Col xs={24} lg={18} md={12}>
                 <Input.Search
                     onSearch={handleSearch} enterButton ref={searchRef} allowClear placeholder='Cari keterampilan' className='w-full' />
             </Col>
-            <Col xs={24} md={6} className='flex justify-end'>
+            <Col xs={24} lg={6} md={12} className='flex justify-end'>
                 <AssessmentExplanationModal />
-                <Button icon={<SaveOutlined />} onClick={handleSubmit}>Simpan</Button>
+                <Button icon={<BackwardOutlined />} onClick={() => navigate({ to: "/karu/log-book" })}>Kembali</Button>
             </Col>
         </Row>
-        <Typography.Title level={3}>Sasaran Keselamatan Pasien (SKP)</Typography.Title>
         <RenderSoals soals={listSoal} />
-        <Spin fullscreen spinning={loadingSubmit} />
+        <Spin fullscreen spinning={loading} />
     </Ctx.Provider>
 
 }
 
-export const Route = createFileRoute('/__guard/perawat/self-assesmen/new')({
-    component: PerawatSelfAsesmenNew
+
+export const Route = createFileRoute('/__guard/karu/log-book/view-assess/$id')({
+    component: ReportAssesmen
 })

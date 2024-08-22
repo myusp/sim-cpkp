@@ -62,6 +62,11 @@ const menuAdmin: MenuProps['items'] = [
                 label: <Link to='/admin/form/penilaian'>Pertanyaan Penilaian</Link>,
                 icon: <ReadOutlined />,
             },
+            {
+                key: "/admin/form/log-book-karu",
+                label: <Link to='/admin/form/log-book-karu'>Pertanyaan Log Book Karu</Link>,
+                icon: <ReadOutlined />,
+            },
         ],
         icon: <BookOutlined />
     },
@@ -77,6 +82,11 @@ const menuKaru: MenuProps['items'] = [
         key: "/karu/dashboard",
         label: <Link to='/karu'>Dashboard Karu</Link>,
         icon: <HomeOutlined />,
+    },
+    {
+        key: "/karu/log-book",
+        label: <Link to='/karu/log-book'>Log Book</Link>,
+        icon: <BookOutlined />,
     },
     // Tambahkan item menu lain yang sesuai dengan peran Karu
 ];
@@ -113,6 +123,8 @@ const GuardSession = () => {
                 return menuAdmin;
             case 'karu':
                 return menuKaru;
+            case 'katim':
+                return menuKaru;
             case 'perawat':
                 return menuPerawat;
             default:
@@ -131,6 +143,7 @@ const GuardSession = () => {
             if (isAppReady) {
                 const paths = location.pathname.split('/')
                 if (paths[1] != user?.role) {
+
                     navigate({ to: `/${user?.role}` })
                 }
             }

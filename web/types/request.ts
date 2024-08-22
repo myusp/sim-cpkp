@@ -94,6 +94,7 @@ export interface UserAssessmentListParams {
     email?: string
     rumahSakitId?: string
     ruanganRSId?: string
+    statusPenilaian?: number
 }
 
 
@@ -104,5 +105,45 @@ export type MasterPertanyaanUpdateRequest = Partial<Omit<MasterPertanyaanAssesme
 export type MasterPertanyaanParams = {
     id: number;
 };
+
+export type MasterLogBookKaruCreateRequest = {
+    skp: string;
+    kegiatan: string;
+    status?: number;
+};
+
+export type MasterLogBookKaruUpdateRequest = Partial<Omit<MasterLogBookKaruCreateRequest, 'id'>>;
+
+export type MasterLogBookKaruParams = {
+    id: number;
+};
+
+export type MasterPenilaianKaruCreateRequest = {
+    kategori: string;
+    penilaian: string;
+    status?: number;
+};
+
+export type MasterPenilaianKaruUpdateRequest = Partial<Omit<MasterPenilaianKaruCreateRequest, 'id'>>;
+
+export type MasterPenilaianKaruParams = {
+    id: number;
+};
+
+export type UserLogbookKaruCreateRequest = {
+    id_master_logbook_karus: string[];
+    answers: { id: number, jawaban: number }[];
+    userAsesmenId: string;
+};
+
+export type UserLogbookKaruUpdateRequest = {
+    id_user_logbook_karu: string;
+    answers: { id: number, jawaban: number }[];
+};
+
+export interface UserLogbookKaruListRequest {
+    rumahSakitId: string
+    ruanganRSId: string
+}
 
 

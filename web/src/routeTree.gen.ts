@@ -20,16 +20,19 @@ import { Route as guardPerawatIndexImport } from './routes/__guard.perawat/index
 import { Route as guardKaruIndexImport } from './routes/__guard.karu/index'
 import { Route as guardAdminIndexImport } from './routes/__guard.admin/index'
 import { Route as guardPerawatSelfAssesmenIndexImport } from './routes/__guard.perawat/self-assesmen/index'
+import { Route as guardKaruLogBookIndexImport } from './routes/__guard.karu/log-book/index'
 import { Route as guardAdminReportIndexImport } from './routes/__guard.admin/report/index'
 import { Route as guardPerawatSelfAssesmenNewImport } from './routes/__guard.perawat/self-assesmen/new'
 import { Route as guardAdminReportIdImport } from './routes/__guard.admin/report/$id'
 import { Route as guardAdminFormPenilaianImport } from './routes/__guard.admin/form/penilaian'
+import { Route as guardAdminFormLogBookKaruImport } from './routes/__guard.admin/form/log-book-karu'
 import { Route as guardAdminFormAssesmentImport } from './routes/__guard.admin/form/assesment'
 import { Route as guardAdminDataRoomImport } from './routes/__guard.admin/data/room'
 import { Route as guardAdminDataHospitalImport } from './routes/__guard.admin/data/hospital'
 import { Route as guardAdminDataCpdImport } from './routes/__guard.admin/data/cpd'
 import { Route as guardAdminDataAkunImport } from './routes/__guard.admin/data/akun'
 import { Route as guardPerawatSelfAssesmenEditIdImport } from './routes/__guard.perawat/self-assesmen/edit/$id'
+import { Route as guardKaruLogBookViewAssessIdImport } from './routes/__guard.karu/log-book/view-assess.$id'
 
 // Create Virtual Routes
 
@@ -78,6 +81,11 @@ const guardPerawatSelfAssesmenIndexRoute =
     getParentRoute: () => guardRoute,
   } as any)
 
+const guardKaruLogBookIndexRoute = guardKaruLogBookIndexImport.update({
+  path: '/karu/log-book/',
+  getParentRoute: () => guardRoute,
+} as any)
+
 const guardAdminReportIndexRoute = guardAdminReportIndexImport.update({
   path: '/admin/report/',
   getParentRoute: () => guardRoute,
@@ -96,6 +104,11 @@ const guardAdminReportIdRoute = guardAdminReportIdImport.update({
 
 const guardAdminFormPenilaianRoute = guardAdminFormPenilaianImport.update({
   path: '/admin/form/penilaian',
+  getParentRoute: () => guardRoute,
+} as any)
+
+const guardAdminFormLogBookKaruRoute = guardAdminFormLogBookKaruImport.update({
+  path: '/admin/form/log-book-karu',
   getParentRoute: () => guardRoute,
 } as any)
 
@@ -127,6 +140,12 @@ const guardAdminDataAkunRoute = guardAdminDataAkunImport.update({
 const guardPerawatSelfAssesmenEditIdRoute =
   guardPerawatSelfAssesmenEditIdImport.update({
     path: '/perawat/self-assesmen/edit/$id',
+    getParentRoute: () => guardRoute,
+  } as any)
+
+const guardKaruLogBookViewAssessIdRoute =
+  guardKaruLogBookViewAssessIdImport.update({
+    path: '/karu/log-book/view-assess/$id',
     getParentRoute: () => guardRoute,
   } as any)
 
@@ -218,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof guardAdminFormAssesmentImport
       parentRoute: typeof guardImport
     }
+    '/__guard/admin/form/log-book-karu': {
+      id: '/__guard/admin/form/log-book-karu'
+      path: '/admin/form/log-book-karu'
+      fullPath: '/admin/form/log-book-karu'
+      preLoaderRoute: typeof guardAdminFormLogBookKaruImport
+      parentRoute: typeof guardImport
+    }
     '/__guard/admin/form/penilaian': {
       id: '/__guard/admin/form/penilaian'
       path: '/admin/form/penilaian'
@@ -246,11 +272,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof guardAdminReportIndexImport
       parentRoute: typeof guardImport
     }
+    '/__guard/karu/log-book/': {
+      id: '/__guard/karu/log-book/'
+      path: '/karu/log-book'
+      fullPath: '/karu/log-book'
+      preLoaderRoute: typeof guardKaruLogBookIndexImport
+      parentRoute: typeof guardImport
+    }
     '/__guard/perawat/self-assesmen/': {
       id: '/__guard/perawat/self-assesmen/'
       path: '/perawat/self-assesmen'
       fullPath: '/perawat/self-assesmen'
       preLoaderRoute: typeof guardPerawatSelfAssesmenIndexImport
+      parentRoute: typeof guardImport
+    }
+    '/__guard/karu/log-book/view-assess/$id': {
+      id: '/__guard/karu/log-book/view-assess/$id'
+      path: '/karu/log-book/view-assess/$id'
+      fullPath: '/karu/log-book/view-assess/$id'
+      preLoaderRoute: typeof guardKaruLogBookViewAssessIdImport
       parentRoute: typeof guardImport
     }
     '/__guard/perawat/self-assesmen/edit/$id': {
@@ -276,11 +316,14 @@ export const routeTree = rootRoute.addChildren({
     guardAdminDataHospitalRoute,
     guardAdminDataRoomRoute,
     guardAdminFormAssesmentRoute,
+    guardAdminFormLogBookKaruRoute,
     guardAdminFormPenilaianRoute,
     guardAdminReportIdRoute,
     guardPerawatSelfAssesmenNewRoute,
     guardAdminReportIndexRoute,
+    guardKaruLogBookIndexRoute,
     guardPerawatSelfAssesmenIndexRoute,
+    guardKaruLogBookViewAssessIdRoute,
     guardPerawatSelfAssesmenEditIdRoute,
   }),
   AboutRoute,
@@ -315,11 +358,14 @@ export const routeTree = rootRoute.addChildren({
         "/__guard/admin/data/hospital",
         "/__guard/admin/data/room",
         "/__guard/admin/form/assesment",
+        "/__guard/admin/form/log-book-karu",
         "/__guard/admin/form/penilaian",
         "/__guard/admin/report/$id",
         "/__guard/perawat/self-assesmen/new",
         "/__guard/admin/report/",
+        "/__guard/karu/log-book/",
         "/__guard/perawat/self-assesmen/",
+        "/__guard/karu/log-book/view-assess/$id",
         "/__guard/perawat/self-assesmen/edit/$id"
       ]
     },
@@ -361,6 +407,10 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__guard.admin/form/assesment.tsx",
       "parent": "/__guard"
     },
+    "/__guard/admin/form/log-book-karu": {
+      "filePath": "__guard.admin/form/log-book-karu.tsx",
+      "parent": "/__guard"
+    },
     "/__guard/admin/form/penilaian": {
       "filePath": "__guard.admin/form/penilaian.tsx",
       "parent": "/__guard"
@@ -377,8 +427,16 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__guard.admin/report/index.tsx",
       "parent": "/__guard"
     },
+    "/__guard/karu/log-book/": {
+      "filePath": "__guard.karu/log-book/index.tsx",
+      "parent": "/__guard"
+    },
     "/__guard/perawat/self-assesmen/": {
       "filePath": "__guard.perawat/self-assesmen/index.tsx",
+      "parent": "/__guard"
+    },
+    "/__guard/karu/log-book/view-assess/$id": {
+      "filePath": "__guard.karu/log-book/view-assess.$id.tsx",
       "parent": "/__guard"
     },
     "/__guard/perawat/self-assesmen/edit/$id": {

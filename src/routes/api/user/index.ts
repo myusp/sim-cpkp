@@ -304,9 +304,18 @@ const user: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
                 // Filter berdasarkan Role
                 if (filters.role) {
-                    queryConditions.AND.push({
-                        role: filters.role,
-                    });
+                    if (filters.role.includes("karu")) {
+                        queryConditions.AND.push({
+                            role: {
+                                in: [filters.role, "katim"]
+                            }
+                        });
+                    } else {
+                        queryConditions.AND.push({
+                            role: filters.role,
+                        });
+                    }
+
                 }
 
                 // Melakukan pencarian user berdasarkan kondisi yang sudah dibangun

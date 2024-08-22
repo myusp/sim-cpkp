@@ -262,6 +262,16 @@ const PertanyaanManager: React.FC = () => {
             <Input />
           </Form.Item>
           <Form.Item
+            name="tipe"
+            label="Tipe"
+            rules={[{ required: true, message: 'Silakan pilih tipe' }]}
+          >
+            <Select>
+              <Option value={"diagnosa"} >Diagnosa</Option>
+              <Option value={"intervensi"}>Intervensi</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
             name="keterampilan"
             label="Keterampilan"
             rules={[{ required: true, message: 'Silakan masukkan Keterampilan' }]}

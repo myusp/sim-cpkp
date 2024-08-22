@@ -146,12 +146,12 @@ const RenderSoals: FC<{ soals: MasterPertanyaanActiveResponse[] }> = ({ soals = 
 
     return <Spin spinning={loading} className='min-h-10' delay={0}>
         {/* <div className='h-16'></div> */}
-        {Object.keys(skp1).length > 0 && <RenderSoal data={skp1} name='SKP1' />}
-        {Object.keys(skp2).length > 0 && <RenderSoal data={skp2} name='SKP2' />}
-        {Object.keys(skp3).length > 0 && <RenderSoal data={skp3} name='SKP3' />}
-        {Object.keys(skp4).length > 0 && <RenderSoal data={skp4} name='SKP4' />}
-        {Object.keys(skp5).length > 0 && <RenderSoal data={skp5} name='SKP5' />}
-        {Object.keys(skp6).length > 0 && <RenderSoal data={skp6} name='SKP6' />}
+        {Object.keys(skp1).length > 0 && <RenderSoal data={skp1} name='SKP1 (Mengidentifikasi  Pasien dengan Benar)' />}
+        {Object.keys(skp2).length > 0 && <RenderSoal data={skp2} name='SKP2 (Meningkatkan Komunikasi yang Efektif)' />}
+        {Object.keys(skp3).length > 0 && <RenderSoal data={skp3} name='SKP3 (Meningkatkan Keamanan Obat-Obatan yang Harus Diwaspadai)' />}
+        {Object.keys(skp4).length > 0 && <RenderSoal data={skp4} name='SKP4 (Memastikan lokasi pembedahan yang benar, prosedur yang benar, pembedahan pada pasien yang benar)' />}
+        {Object.keys(skp5).length > 0 && <RenderSoal data={skp5} name='SKP5 (Mengurangi Resiko Infeksi Akibat Perawatan Kesehatan)' />}
+        {Object.keys(skp6).length > 0 && <RenderSoal data={skp6} name='SKP6 (Mengurangi Resiko Cedera Pasien Akibat Terjatuh)' />}
     </Spin>
 }
 

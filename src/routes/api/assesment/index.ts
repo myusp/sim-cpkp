@@ -252,13 +252,16 @@ const assessment: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         Reply: UserAssessmentListResponse | ErrorResponse;
     }>('/list', { onRequest: [fastify.authenticate] }, async function (request, reply) {
         try {
-            const { email, ruanganRSId, rumahSakitId } = request.query;
+            const { email, ruanganRSId, rumahSakitId, statusPenilaian } = request.query;
             const assessment = await prisma.userAssesmen.findMany({
                 where: {
                     AND: [
                         email ? { Akun: { email } } : {},
                         rumahSakitId ? { Akun: { masterRumahSakitId: rumahSakitId } } : {},
-                        ruanganRSId ? { Akun: { masterRuanganRSId: ruanganRSId } } : {}
+                        ruanganRSId ? { Akun: { masterRuanganRSId: ruanganRSId } } : {},
+                        statusPenilaian ? {
+                            id_penilaian: { not: null }
+                        } : {}
                     ],
                 },
                 include: {

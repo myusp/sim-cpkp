@@ -61,8 +61,10 @@ model Akun {
   MasterRumahSakit   MasterRumahSakit? @relation(fields: [masterRumahSakitId], references: [id], name: "AkunRumahSakit")
 
   masterRuanganRSId String?
-  MasterRuanganRS   MasterRuanganRS? @relation(fields: [masterRuanganRSId], references: [id], name: "AkunRuanganRS")
+  MasterRuanganRS   MasterRuanganRS?    @relation(fields: [masterRuanganRSId], references: [id], name: "AkunRuanganRS")
   UserAssesmen      UserAssesmen[]
+  UserLogbookKaru   UserLogbookKaru[]
+  UserPenilaianKaru UserPenilaianKaru[]
 }
 
 model MasterRumahSakit {
@@ -243,7 +245,9 @@ model UserAssesmen {
   // Relation to UserJawabanAsesmen
   jawaban UserJawabanAsesmen[]
 
-  Akun Akun @relation(fields: [email], references: [email])
+  Akun              Akun               @relation(fields: [email], references: [email])
+  UserPenilaianKaru UserPenilaianKaru? @relation(fields: [id_penilaian], references: [id])
+  UserLogbookKaru   UserLogbookKaru[]
 }
 
 model UserJawabanAsesmen {
@@ -269,4 +273,77 @@ model MasterKeterampilanDiagnosis {
 model MasterKeterampilanIntervensi {
   id              String @id
   nama_kompetensi String
+}
+
+model MasterLogBookKaru {
+  id                     Int                      @id @default(autoincrement())
+  skp                    String
+  kegiatan               String
+  status                 Int                      @default(1) // Misalnya, 1 untuk aktif, 0 untuk tidak aktif
+  created_at             DateTime                 @default(now())
+  updated_at             DateTime                 @updatedAt
+  UserJawabanLogBookKaru UserJawabanLogBookKaru[]
+}
+
+model UserLogbookKaru {
+  id               String       @id @default(uuid())
+  email            String
+  created_at       DateTime     @default(now())
+  updated_at       DateTime     @default(now()) @updatedAt
+  userAsesmenId    String
+  idMasterLogBooks String?      @db.Text
+  UserAssesmen     UserAssesmen @relation(fields: [userAsesmenId], references: [id])
+  // Relasi ke tabel Akun
+  Akun             Akun         @relation(fields: [email], references: [email])
+
+  // Relasi ke tabel UserJawabanLogBookKaru
+  jawabanLogBook UserJawabanLogBookKaru[]
+}
+
+model UserJawabanLogBookKaru {
+  id                  String @id @default(uuid())
+  idUserLogBookKaru   String
+  idMasterLogBookKaru Int
+  jawaban             Int    @default(0)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  // Relasi ke tabel userLogbookKaru
+  userLogbookKaru UserLogbookKaru @relation(fields: [idUserLogBookKaru], references: [id])
+
+  // Relasi ke tabel masterLogBookKaru
+  masterLogBookKaru MasterLogBookKaru @relation(fields: [idMasterLogBookKaru], references: [id])
+}
+
+model MasterPenilaianKaru {
+  id                       Int                        @id @default(autoincrement())
+  kategori                 String
+  penilaian                String
+  status                   Int                        @default(1) // 1 untuk aktif, 0 untuk tidak aktif
+  created_at               DateTime                   @default(now())
+  updated_at               DateTime                   @default(now()) @updatedAt
+  UserJawabanPenilaianKaru UserJawabanPenilaianKaru[]
+}
+
+model UserPenilaianKaru {
+  id                    String   @id @default(uuid())
+  email                 String
+  score                 Float    @default(0)
+  idMasterPenilaianKaru String   @db.Text
+  created_at            DateTime @default(now())
+  updated_at            DateTime @default(now()) @updatedAt
+
+  Akun Akun @relation(fields: [email], references: [email])
+
+  UserAssesmen             UserAssesmen[]
+  UserJawabanPenilaianKaru UserJawabanPenilaianKaru[]
+}
+
+model UserJawabanPenilaianKaru {
+  id                    Int                 @id @default(autoincrement())
+  idUserPenilaianKaru   String
+  idMasterPenilaianKaru Int
+  UserPenilaianKaru     UserPenilaianKaru   @relation(fields: [idUserPenilaianKaru], references: [id])
+  MasterPenilaianKaru   MasterPenilaianKaru @relation(fields: [idMasterPenilaianKaru], references: [id])
 }

@@ -13,6 +13,7 @@ export type UserDetailResponse = {
     unitTempatBekerjaTerakhir: unknown
     MasterRuanganRS: unknown
     masterRumahSakitId: unknown
+    masterRuanganRSId: unknown
     created_at: string
     nama: string
 }
@@ -127,3 +128,33 @@ export interface UserAssessmentViewResponse {
 export interface UserAssessmentListResponse {
     data: { assesmen: UserAssesmen, akun: Akun & { MasterRumahSakit?: MasterRumahSakit, MasterRuanganRS?: MasterRuanganRS } }[]
 }
+
+export type MasterLogBookKaruResponse = {
+    id: number;
+    skp: string;
+    kegiatan: string;
+    status: number;
+    created_at: Date;
+    updated_at: Date;
+};
+
+export type MasterLogBookKaruActiveResponse = Omit<MasterLogBookKaruResponse, 'status'>;
+
+export type MasterPenilaianKaruResponse = {
+    id: number;
+    kategori: string;
+    penilaian: string;
+    status: number;
+    created_at: Date;
+    updated_at: Date;
+};
+
+export type MasterPenilaianKaruActiveResponse = Omit<MasterPenilaianKaruResponse, 'status'>;
+
+export interface UserLogbookKaruResponse {
+    id: string;
+    id_master_logbook_karus: string[];
+    answers: { id: number, jawaban: number }[];
+}
+
+

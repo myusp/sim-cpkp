@@ -159,6 +159,7 @@ export interface UserAssesmen {
     skp_5?: string;
     skp_6?: string;
     email: string;
+    id_penilaian?: string
     created_at: Date;
     updated_at: Date;
 }
@@ -181,3 +182,13 @@ export interface MasterKeterampilanIntervensi {
     id: string;
     nama_kompetensi: string;
 }
+
+export type MasterLogBookKaru = {
+    id: number;
+    skp: string;
+    kegiatan: string;
+    status: number;
+    created_at: Date;
+    updated_at: Date;
+};
+
