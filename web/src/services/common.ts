@@ -4,7 +4,7 @@ import axios, { AxiosError } from 'axios';
 // Membuat instance Axios
 const axiosInstance = axios.create({
     // baseURL: 'http://localhost:3000', // ganti dengan base URL API Anda
-    baseURL: 'http://16.78.93.145:3000',
+    baseURL: import.meta.env.VITE_API_URL,
     timeout: 10000, // waktu timeout request (opsional)
 });
 

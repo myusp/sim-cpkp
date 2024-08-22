@@ -253,6 +253,29 @@ const assessment: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     });
 
     fastify.get<{
+        Params: UserAssessmentParams;
+    }>('/view-head/:id', { onRequest: [fastify.authenticate] }, async function (request, reply) {
+        try {
+            const { id } = request.params;
+            const assessment = await prisma.userAssesmen.findUnique({
+                where: { id },
+                include: {
+                    Akun: true,
+                },
+            });
+
+            if (!assessment) {
+                return reply.status(404).send({ error: "Assessment not found" });
+            }
+
+            return reply.status(200).send(assessment);
+        } catch (error) {
+            console.log(error)
+            reply.status(500).send({ error: "Failed to fetch assessment summary" });
+        }
+    });
+
+    fastify.get<{
         Querystring: UserAssessmentListParams;
         Reply: UserAssessmentListResponse | ErrorResponse;
     }>('/list', { onRequest: [fastify.authenticate] }, async function (request, reply) {

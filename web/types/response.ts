@@ -158,3 +158,69 @@ export interface UserLogbookKaruResponse {
 }
 
 
+
+
+export type ListAssesmenLogBookResponse = {
+    data: Array<{
+        assesmen: {
+            id: string
+            tanggal: string
+            skp_1: string
+            skp_2: string
+            skp_3: string
+            skp_4: string
+            skp_5: string
+            skp_6: string
+            email: string
+            id_master_pertanyaans: string
+            id_penilaian: unknown
+            created_at: string
+            updated_at: string
+        }
+        akun: {
+            nama: string
+            email: string
+            MasterRuanganRS: {
+                id: string
+                nama: string
+                id_rs: string
+            }
+            MasterRumahSakit: {
+                id: string
+                nama: string
+            }
+        }
+        logBookKaru: Array<never>
+    }>
+}
+
+export type viewAssesmenHeadResponse = {
+    id: string
+    tanggal: string
+    skp_1: string
+    skp_2: string
+    skp_3: string
+    skp_4: string
+    skp_5: string
+    skp_6: string
+    email: string
+    id_master_pertanyaans: string
+    id_penilaian?: string
+    created_at: string
+    updated_at: string
+    Akun: {
+        iduser: string
+        email: string
+        password: string
+        last_login: string
+        nama: string
+        created_at: string
+        role: string
+        pendidikanTerakhir: string
+        unitTempatBekerjaTerakhir?: string
+        userId?: number
+        masterRumahSakitId: string
+        masterRuanganRSId: string
+    }
+}
+

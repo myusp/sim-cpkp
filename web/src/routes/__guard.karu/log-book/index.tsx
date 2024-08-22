@@ -1,19 +1,20 @@
 import NilaiSKP from '@/components/NilaiSKP'
 import { useAppContext } from '@/context'
-import { listAssesmen } from '@/services/asesment'
+import { getListAssesmenLogBook } from '@/services/logBookKaru'
 import { EditOutlined, EyeOutlined } from '@ant-design/icons'
 import { useMounted } from '@mantine/hooks'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button, Col, Row, Space, Table, Tag } from 'antd'
 import { ColumnType } from 'antd/es/table'
-import { Akun, UserAssesmen } from 'app-type/index'
+import { ListAssesmenLogBookResponse } from 'app-type/response'
 import dayjs from 'dayjs'
 import { debounce } from 'lodash'
 import { useEffect, useState } from 'react'
 
 
 const SelfAssesmenIndex = () => {
-  const [data, setData] = useState<{ assesmen: UserAssesmen; akun: Akun; }[]>([])
+  const [data, setData] = useState<ListAssesmenLogBookResponse["data"]>([])
+
   const { user } = useAppContext()
   const mounted = useMounted()
   const navigate = Route.useNavigate()
@@ -28,13 +29,13 @@ const SelfAssesmenIndex = () => {
   }, [mounted, user?.email])
 
   const fetchList = () => {
-    listAssesmen({ rumahSakitId: user?.masterRumahSakitId as string, ruanganRSId: user?.masterRuanganRSId as string })
+    getListAssesmenLogBook({ rumahSakitId: user?.masterRumahSakitId as string, ruanganRSId: user?.masterRuanganRSId as string })
       .then(res => {
         setData(res.data)
       })
   }
 
-  const columns: ColumnType<{ assesmen: UserAssesmen; akun: Akun; }>[] = [
+  const columns: ColumnType<ListAssesmenLogBookResponse["data"][0]>[] = [
     {
       title: 'Tanggal',
       dataIndex: ['assesmen', "created_at"],
@@ -49,7 +50,7 @@ const SelfAssesmenIndex = () => {
       key: 'Akun.nama',
     },
     {
-      title: 'Penilaian',
+      title: 'LogBook',
       dataIndex: ['assesmen', "id_penilaian"],
       key: 'assesmen.id_penilaian',
       render: (v) => {
@@ -115,7 +116,8 @@ const SelfAssesmenIndex = () => {
             navigate({ to: "/karu/log-book/view-assess/$id", params: { id: record.assesmen.id } })
           }} />
           <Button icon={<EditOutlined />} onClick={() => {
-            console.log("new")
+            // console.log("new")
+            navigate({ to: "/karu/log-book/log/$id", params: { id: record.assesmen.id } })
           }} />
         </Space>
       ),
@@ -128,7 +130,7 @@ const SelfAssesmenIndex = () => {
       <Row gutter={[16, 16]}>
         <Col span={24}>
           <Table
-            scroll={{ x: 1000 }}
+            scroll={{ x: 2000 }}
             columns={columns}
             dataSource={data}
           />

@@ -33,6 +33,7 @@ import { Route as guardAdminDataCpdImport } from './routes/__guard.admin/data/cp
 import { Route as guardAdminDataAkunImport } from './routes/__guard.admin/data/akun'
 import { Route as guardPerawatSelfAssesmenEditIdImport } from './routes/__guard.perawat/self-assesmen/edit/$id'
 import { Route as guardKaruLogBookViewAssessIdImport } from './routes/__guard.karu/log-book/view-assess.$id'
+import { Route as guardKaruLogBookLogIdImport } from './routes/__guard.karu/log-book/log.$id'
 
 // Create Virtual Routes
 
@@ -148,6 +149,11 @@ const guardKaruLogBookViewAssessIdRoute =
     path: '/karu/log-book/view-assess/$id',
     getParentRoute: () => guardRoute,
   } as any)
+
+const guardKaruLogBookLogIdRoute = guardKaruLogBookLogIdImport.update({
+  path: '/karu/log-book/log/$id',
+  getParentRoute: () => guardRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -286,6 +292,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof guardPerawatSelfAssesmenIndexImport
       parentRoute: typeof guardImport
     }
+    '/__guard/karu/log-book/log/$id': {
+      id: '/__guard/karu/log-book/log/$id'
+      path: '/karu/log-book/log/$id'
+      fullPath: '/karu/log-book/log/$id'
+      preLoaderRoute: typeof guardKaruLogBookLogIdImport
+      parentRoute: typeof guardImport
+    }
     '/__guard/karu/log-book/view-assess/$id': {
       id: '/__guard/karu/log-book/view-assess/$id'
       path: '/karu/log-book/view-assess/$id'
@@ -323,6 +336,7 @@ export const routeTree = rootRoute.addChildren({
     guardAdminReportIndexRoute,
     guardKaruLogBookIndexRoute,
     guardPerawatSelfAssesmenIndexRoute,
+    guardKaruLogBookLogIdRoute,
     guardKaruLogBookViewAssessIdRoute,
     guardPerawatSelfAssesmenEditIdRoute,
   }),
@@ -365,6 +379,7 @@ export const routeTree = rootRoute.addChildren({
         "/__guard/admin/report/",
         "/__guard/karu/log-book/",
         "/__guard/perawat/self-assesmen/",
+        "/__guard/karu/log-book/log/$id",
         "/__guard/karu/log-book/view-assess/$id",
         "/__guard/perawat/self-assesmen/edit/$id"
       ]
@@ -433,6 +448,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/__guard/perawat/self-assesmen/": {
       "filePath": "__guard.perawat/self-assesmen/index.tsx",
+      "parent": "/__guard"
+    },
+    "/__guard/karu/log-book/log/$id": {
+      "filePath": "__guard.karu/log-book/log.$id.tsx",
       "parent": "/__guard"
     },
     "/__guard/karu/log-book/view-assess/$id": {
