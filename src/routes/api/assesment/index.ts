@@ -14,11 +14,16 @@ const assessment: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         Reply: UserAssessmentResponse | ErrorResponse;
     }>('/create-answer', { onRequest: [fastify.authenticate] }, async function (request, reply) {
         try {
-            const { id_master_pertanyaans, answers } = request.body;
+            const { id_master_pertanyaans, answers, tanggal } = request.body;
             const { email } = await request.jwtDecode() as JwtPayload;
             const akun = await prisma.akun.findFirst({ where: { email } });
 
-            const today = dayjs().startOf('day').toDate();
+            let today = dayjs().startOf('day').toDate();
+            if (tanggal) {
+                today = dayjs(tanggal).startOf("day").toDate()
+                // console.log(tanggal, today)
+            }
+
 
             // Check if the user has already submitted an assessment today
             const existingAssessment = await prisma.userAssesmen.findFirst({
@@ -38,7 +43,7 @@ const assessment: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             }
 
             if (existingAssessment) {
-                reply.status(500).send({ error: "Anda sudah mengisi self-asesmen hari ini, silakan klik menu self asesmen untuk melakukan update" })
+                reply.status(500).send({ error: `Anda sudah mengisi self-asesmen hari ini, silakan klik menu self asesmen tanggal ${dayjs(today).format("YYYY-MM-DD")} untuk melakukan update` })
             } else {
                 // Get all active questions by IDs
                 const activeQuestions = await prisma.masterPertanyaanAssesmen.findMany({

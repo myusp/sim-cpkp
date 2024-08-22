@@ -272,6 +272,7 @@ const PerawatSelfAsesmenEdit = () => {
                 <Button disabled={!enableEdit} icon={<SaveOutlined />} onClick={handleSubmit}>Simpan</Button>
             </Col>
         </Row>
+        <Typography.Title level={3}>Sasaran Keselamatan Pasien (SKP)</Typography.Title>
         <RenderSoals soals={listSoal} />
         <Spin fullscreen spinning={loadingSubmit || loading} />
     </Ctx.Provider>

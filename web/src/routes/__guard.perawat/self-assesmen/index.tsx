@@ -37,8 +37,8 @@ const SelfAssesmenIndex = () => {
   const columns: ColumnType<{ assesmen: UserAssesmen; akun: Akun; }>[] = [
     {
       title: 'Tanggal',
-      dataIndex: ['assesmen', "created_at"],
-      key: 'assesmen.created_at',
+      dataIndex: ['assesmen', "tanggal"],
+      key: 'assesmen.tanggal',
       render: (value) => {
         return dayjs(value).format("YYYY-MM-DD")
       }
@@ -103,13 +103,13 @@ const SelfAssesmenIndex = () => {
   ];
 
   const handleNewAsesmen = () => {
-    const today = dayjs()
-    const exist = data.find(d => dayjs(d.assesmen.created_at).format("YYYY-MM-DD") == today.format("YYYY-MM-DD"))
-    if (exist) {
-      navigate({ to: "/perawat/self-assesmen/edit/$id", params: { id: exist.assesmen.id } })
-    } else {
-      navigate({ to: "/perawat/self-assesmen/new" })
-    }
+    // const today = dayjs()
+    // const exist = data.find(d => dayjs(d.assesmen.tanggal).format("YYYY-MM-DD") == today.format("YYYY-MM-DD"))
+    // if (exist) {
+    //   navigate({ to: "/perawat/self-assesmen/edit/$id", params: { id: exist.assesmen.id } })
+    // } else {
+    navigate({ to: "/perawat/self-assesmen/new" })
+    // }
   }
 
   return <>

@@ -4,8 +4,9 @@ import { getActivePertanyaan } from '@/services/pertanyaan'
 import { CloseCircleTwoTone, SaveOutlined } from '@ant-design/icons'
 import { useDebouncedValue, useDisclosure, useMounted } from '@mantine/hooks'
 import { createFileRoute } from '@tanstack/react-router'
-import { Button, Col, Collapse, Flex, Input, InputRef, List, message, Radio, RadioChangeEvent, Row, Spin, Tooltip, Typography } from 'antd'
+import { Button, Col, Collapse, DatePicker, Flex, Input, InputRef, List, message, Radio, RadioChangeEvent, Row, Spin, Tooltip, Typography } from 'antd'
 import { MasterPertanyaanActiveResponse } from 'app-type/response'
+import dayjs from 'dayjs'
 import { debounce, groupBy, orderBy } from 'lodash'
 import { createContext, FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -156,6 +157,7 @@ const PerawatSelfAsesmenNew = () => {
     const [listSoal, setListSoal] = useState<MasterPertanyaanActiveResponse[]>([])
     const [searchText, setSearchText] = useState<string>("")
     const [loadingSubmit, loadingSubmitHandler] = useDisclosure(false)
+    const [selectedDate, setSelectedDate] = useState(dayjs())
     const searchRef = useRef<InputRef>(null)
 
     const mounted = useMounted()
@@ -188,7 +190,8 @@ const PerawatSelfAsesmenNew = () => {
         loadingSubmitHandler.open()
         submitAssessment({
             answers: listAnswer as unknown as { id: number, answer: string }[],
-            id_master_pertanyaans: listSoal.map(s => `${s.id}`)
+            id_master_pertanyaans: listSoal.map(s => `${s.id}`),
+            tanggal: selectedDate?.format("YYYY-MM-DD") || ""
         }).then(res => {
             console.log(res)
             message.success("Berhasil membuat self assesmen baru")
@@ -218,6 +221,19 @@ const PerawatSelfAsesmenNew = () => {
             </Col>
         </Row>
         <Typography.Title level={3}>Sasaran Keselamatan Pasien (SKP)</Typography.Title>
+        <Row gutter={[16, 16]} className='mb-4'>
+            <Col xs={24} md={6} >
+                Tanggal
+            </Col>
+            <Col xs={24} md={18} >
+                <DatePicker
+                    disabledDate={current => {
+                        return current
+                            && (current > dayjs().endOf('day') || current < dayjs("2024-08-01").startOf("day"))
+                    }}
+                    value={selectedDate} onChange={d => setSelectedDate(d)} />
+            </Col>
+        </Row>
         <RenderSoals soals={listSoal} />
         <Spin fullscreen spinning={loadingSubmit} />
     </Ctx.Provider>

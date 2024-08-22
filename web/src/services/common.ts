@@ -1,9 +1,10 @@
-import { message } from 'antd';
+import { notification } from 'antd';
 import axios, { AxiosError } from 'axios';
 
 // Membuat instance Axios
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:3000', // ganti dengan base URL API Anda
+    // baseURL: 'http://localhost:3000', // ganti dengan base URL API Anda
+    baseURL: 'http://16.78.93.145:3000',
     timeout: 10000, // waktu timeout request (opsional)
 });
 
@@ -34,21 +35,24 @@ axiosInstance.interceptors.response.use(
     },
     (error: AxiosError<{ error?: string, message?: string }>) => {
         // Jika response error
+        // console.log("error",error)
+        // notification.error({ message: "erro" })
         if (error.response) {
             // Server merespon dengan status kode di luar 2xx
             const statusCode = error.response.status;
 
             // Tampilkan pesan error berdasarkan status code
             if (statusCode === 401) {
-                message.error('Unauthorized! Please login again.');
+                notification.error({ message: 'Unauthorized! Please login again.' });
             } else if (statusCode === 403) {
-                message.error('Forbidden! You do not have permission to access this resource.');
+                notification.error({ message: 'Forbidden! You do not have permission to access this resource.' });
             } else if (statusCode === 404) {
-                message.error('Not Found! The resource you are looking for does not exist.');
+                notification.error({ message: 'Not Found! The resource you are looking for does not exist.' });
             } else if (statusCode === 500) {
-                message.error(error.response.data?.error || 'Internal Server Error! Something went wrong on the server.');
+                // window.alert(error)
+                notification.error({ message: error.response.data?.error || 'Internal Server Error! Something went wrong on the server.' });
             } else {
-                message.error(`Error ${statusCode}: ${error.response.data?.message || 'An error occurred'}`);
+                notification.error({ message: `Error ${statusCode}: ${error.response.data?.message || 'An error occurred'}` });
             }
 
             // Atau, Anda bisa menggunakan console.log

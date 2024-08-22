@@ -83,6 +83,7 @@ export interface UserAssessmentParams {
 export interface UserAssessmentCreateRequest {
     id_master_pertanyaans: string[];
     answers: { id: number, answer: string }[];
+    tanggal?: string
 }
 
 export interface UserAssessmentUpdateRequest {

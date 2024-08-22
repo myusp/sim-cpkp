@@ -11,7 +11,8 @@ export default fp<PrismaPluginOptions>((fastify: FastifyInstance, opts: PrismaPl
     const prisma = new PrismaClient({
         transactionOptions: {
             timeout: 1000 * 60
-        }
+        },
+        log: ["query", "info"]
     });
 
     // Dekorasi instance Fastify dengan Prisma Client
