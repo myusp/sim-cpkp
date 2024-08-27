@@ -1,6 +1,6 @@
 
 import { MasterLogBookKaruCreateRequest, MasterLogBookKaruUpdateRequest } from "app-type/request";
-import { MasterLogBookKaruResponse, MasterLogBookKaruActiveResponse, ListAssesmenLogBookResponse } from "app-type/response";
+import { MasterLogBookKaruResponse, MasterLogBookKaruActiveResponse, ListAssesmenLogBookResponse, logBookAnswerByUserAssemenIdResponse } from "app-type/response";
 import axiosInstance from "./common";
 
 // Fungsi untuk mendapatkan daftar semua logbook
@@ -81,4 +81,30 @@ export const getListAssesmenLogBook = async (params: { email?: string, ruanganRS
     }
 };
 
+export const upsertAsesmenLogBook = async (data: { userAsesmenId: string, idMasterLogBooks: string[], answer: { id: number, answer: number }[] }): Promise<{ message: string }> => {
+    try {
+        const response = await axiosInstance.post<{ message: string }>('/api/log-book-karu/assesmen/answer', {
+            ...data
+        });
+        return response.data;
+
+    } catch (error) {
+        console.error('Error fetching active logbook:', error);
+        throw error;
+    }
+}
+
+
+export const logBookAnswerByUserAssemenId = async (params: { userAsesmenId: string }): Promise<logBookAnswerByUserAssemenIdResponse> => {
+    try {
+        const response = await axiosInstance.get<logBookAnswerByUserAssemenIdResponse>('/api/log-book-karu/assesmen/answer-by-userAsesmenId', {
+            params
+        });
+        return response.data;
+
+    } catch (error) {
+        console.error('Error fetching active logbook:', error);
+        throw error;
+    }
+}
 

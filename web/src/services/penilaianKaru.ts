@@ -1,5 +1,5 @@
 import { MasterPenilaianKaruCreateRequest, MasterPenilaianKaruUpdateRequest } from "app-type/request";
-import { MasterPenilaianKaruResponse, MasterPenilaianKaruActiveResponse } from "app-type/response";
+import { MasterPenilaianKaruResponse, MasterPenilaianKaruActiveResponse, listPenilaianKaruResponse, viewDetailByIdUserPenilaianKaruResponse } from "app-type/response";
 import axiosInstance from "./common";
 
 // Fungsi untuk mendapatkan daftar semua penilaian
@@ -66,3 +66,43 @@ export const getActivePenilaianKaru = async (): Promise<MasterPenilaianKaruActiv
         throw error;
     }
 };
+
+
+export const listPenilaianKaru = async (params: { email?: string, ruanganRSId?: string, rumahSakitId?: string }): Promise<listPenilaianKaruResponse> => {
+    try {
+        const response = await axiosInstance.get<listPenilaianKaruResponse>('/api/penilaian-karu/assesmen/list', {
+            params
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching active penilaian:', error);
+        throw error;
+    }
+};
+
+export const upsertPenilaianKaru = async (data: { emailPerawat: string, idMasterPenilaianKaru: string[], listTanggal: string[], answer: { id: number, answer: number }[] }): Promise<{ message: string }> => {
+    try {
+        const response = await axiosInstance.post<{ message: string }>('/api/penilaian-karu/assesmen/answer', {
+            ...data
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching active penilaian:', error);
+        throw error;
+    }
+};
+
+export const viewDetailByIdUserPenilaianKaru = async (params: { idUserPenilaianKaru: string }): Promise<viewDetailByIdUserPenilaianKaruResponse> => {
+    try {
+        const response = await axiosInstance.get<viewDetailByIdUserPenilaianKaruResponse>('/api/penilaian-karu/assesmen/view-detail', {
+            params
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching active penilaian:', error);
+        throw error;
+    }
+};
+
+
+

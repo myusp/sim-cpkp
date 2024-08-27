@@ -88,6 +88,11 @@ const menuKaru: MenuProps['items'] = [
         label: <Link to='/karu/log-book'>Log Book</Link>,
         icon: <BookOutlined />,
     },
+    {
+        key: "/karu/penilaian",
+        label: <Link to='/karu/penilaian'>Rangkuman Penilaian</Link>,
+        icon: <BookOutlined />,
+    },
     // Tambahkan item menu lain yang sesuai dengan peran Karu
 ];
 

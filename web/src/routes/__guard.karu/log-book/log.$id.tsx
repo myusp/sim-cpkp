@@ -1,14 +1,15 @@
 import NilaiSKP from '@/components/NilaiSKP'
 import { viewAssesmenHead } from '@/services/asesment'
-import { getActiveLogBookKaru } from '@/services/logBookKaru'
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { getActiveLogBookKaru, logBookAnswerByUserAssemenId, upsertAsesmenLogBook } from '@/services/logBookKaru'
+import { BackwardOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { useDisclosure, useLogger, useMounted } from '@mantine/hooks'
 import { createFileRoute } from '@tanstack/react-router'
-import { Col, notification, Row, Spin, Table } from 'antd'
+import { Button, Col, Input, message, notification, Row, Spin, Table } from 'antd'
 import { ColumnType } from 'antd/es/table'
 import { MasterLogBookKaruActiveResponse, viewAssesmenHeadResponse } from 'app-type/response'
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
+import { debounce } from 'lodash'
+import { useEffect, useMemo, useState } from 'react'
 
 const LogBookKaru = () => {
     const [questions, setQuestions] = useState<MasterLogBookKaruActiveResponse[]>([])
@@ -20,14 +21,32 @@ const LogBookKaru = () => {
     const { id } = Route.useParams()
     const [loading, loadingHandler] = useDisclosure(false)
 
+    // const [isView, isViewHandler] = useDisclosure(false)
+    const [search, setSearch] = useState("")
+    const navigate = Route.useNavigate()
+
     useEffect(() => {
         if (mounted && id) {
             loadingHandler.open()
-            Promise.all([getActiveLogBookKaru(), viewAssesmenHead({ id })])
-                .then(([res, res2]) => {
+            Promise.all([getActiveLogBookKaru(), viewAssesmenHead({ id }), logBookAnswerByUserAssemenId({ userAsesmenId: id })])
+                .then(([res, res2, apiAnswer]) => {
+                    const tmpAnswer: Record<number, { answer: number, id: number }> = {}
                     // console.log(res)
                     setQuestions(res)
                     setAssesmenData(res2)
+                    // console.log(apiAnswer)
+                    if (apiAnswer.id) {
+                        apiAnswer.jawabanLogBook.map(j => {
+                            tmpAnswer[j.idMasterLogBookKaru as number] = { id: j.idMasterLogBookKaru, answer: j.jawaban }
+                        })
+
+                    } else {
+                        res.forEach(q => {
+                            tmpAnswer[q.id] = { answer: 0, id: q.id }
+                        })
+                    }
+                    setAnswer(tmpAnswer)
+
                 }).catch(err => {
                     notification.error({ message: err })
                 }).finally(loadingHandler.close)
@@ -38,7 +57,7 @@ const LogBookKaru = () => {
 
     const columns: ColumnType<MasterLogBookKaruActiveResponse>[] = [
         {
-            title: 'skp',
+            title: 'SKP',
             dataIndex: ['skp'],
             key: 'skp',
             width: 100,
@@ -51,7 +70,7 @@ const LogBookKaru = () => {
         {
             title: 'Ya',
             key: 'ya',
-            className: "cursor-pointer border",
+            className: "cursor-pointer border text-center",
             width: 80,
             fixed: "right",
             render(v) {
@@ -86,10 +105,41 @@ const LogBookKaru = () => {
         },
     ]
 
+    const answerArray = Object.values(answer)
+    const filterredQuestion = useMemo(() => {
+        if (!search) return questions
+        else {
+            return questions.filter(q => {
+                return q.kegiatan.toLowerCase().includes(search.toLowerCase())
+            })
+        }
+    }, [questions, search])
+
+    const handleAnswer = async () => {
+        try {
+            // console.log()
+            loadingHandler.open()
+            const resp = await upsertAsesmenLogBook({
+                answer: Object.values(answer),
+                idMasterLogBooks: Object.keys(answer),
+                userAsesmenId: id
+            })
+            // console.log(resp)
+            if (resp.message) {
+                message.success(resp.message)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+        loadingHandler.close()
+    }
 
     return <div className='bg-white rounded shadow md:p-6 p-2' >
         <Spin fullscreen spinning={loading} />
         <Row gutter={[16, 16]}>
+            <Col span={24}>
+                <Button icon={<BackwardOutlined />} onClick={() => navigate({ to: "/karu/log-book" })}>Kembali</Button>
+            </Col>
             <Col xs={24} md={10}>Nama</Col>
             <Col xs={24} md={14}>: {assesmenData?.Akun.nama}</Col>
             <Col xs={24} md={10}>Tanggal Self-Assesmen</Col>
@@ -99,18 +149,32 @@ const LogBookKaru = () => {
                     {Object.keys(assesmenData || {}).filter((k): k is keyof viewAssesmenHeadResponse => k.toLowerCase().startsWith("skp")).map((k) => {
                         const v = assesmenData?.[k] || "0";
                         return (
-                            <Col md={8} className='text-center' key={k}>
-                                {k.split("_").join(" ")} : <b><NilaiSKP nilai={`${v}`} /></b>
+                            <Col md={8} className='text-center border' key={k}>
+                                {k.split("_").join(" ").toUpperCase()} : <b><NilaiSKP nilai={`${v}`} /></b>
                             </Col>
                         );
                     })}
                 </Row>
             </Col>
         </Row>
+        <Row className='mb-4' gutter={[16, 16]}>
+            <Col md={12} xs={24}>
+                Ya/Tidak : <span className='text-teal-600'>{answerArray.filter(q => q.answer == 1).length}</span>/<span className='text-red-600'>
+                    {answerArray.filter(q => q.answer != 1).length}
+                </span></Col>
+            <Col className='flex flex-row' md={12} xs={24}>
+                <Input.Search
+                    onChange={debounce(e => setSearch(e.target.value), 700)}
+                    allowClear
+                    className='mr-2'
+                />
+                <Button onClick={handleAnswer}>Simpan</Button>
+            </Col>
+        </Row>
         <Table
             columns={columns}
-            dataSource={questions}
-            scroll={{ x: 1000 }}
+            dataSource={filterredQuestion}
+            scroll={{ x: 1000, y: "65vh" }}
             pagination={{ pageSize: questions.length }}
         />
         {/* <Row gutter={[16, 16]}>

@@ -60,11 +60,12 @@ model Akun {
   masterRumahSakitId String?
   MasterRumahSakit   MasterRumahSakit? @relation(fields: [masterRumahSakitId], references: [id], name: "AkunRumahSakit")
 
-  masterRuanganRSId String?
-  MasterRuanganRS   MasterRuanganRS?    @relation(fields: [masterRuanganRSId], references: [id], name: "AkunRuanganRS")
-  UserAssesmen      UserAssesmen[]
-  UserLogbookKaru   UserLogbookKaru[]
-  UserPenilaianKaru UserPenilaianKaru[]
+  masterRuanganRSId        String?
+  MasterRuanganRS          MasterRuanganRS?    @relation(fields: [masterRuanganRSId], references: [id], name: "AkunRuanganRS")
+  UserAssesmen             UserAssesmen[]
+  UserLogbookKaru          UserLogbookKaru[]
+  UserPenilaianKaru        UserPenilaianKaru[]
+  UserPenilaianKaruPerawat UserPenilaianKaru[] @relation("akun-perawat")
 }
 
 model MasterRumahSakit {
@@ -329,12 +330,15 @@ model MasterPenilaianKaru {
 model UserPenilaianKaru {
   id                    String   @id @default(uuid())
   email                 String
+  email_perawat         String
+  tanggal               String?  @default("")
   score                 Float    @default(0)
   idMasterPenilaianKaru String   @db.Text
   created_at            DateTime @default(now())
   updated_at            DateTime @default(now()) @updatedAt
 
-  Akun Akun @relation(fields: [email], references: [email])
+  Akun        Akun @relation(fields: [email], references: [email])
+  AkunPerawat Akun @relation(fields: [email_perawat], references: [email], name: "akun-perawat")
 
   UserAssesmen             UserAssesmen[]
   UserJawabanPenilaianKaru UserJawabanPenilaianKaru[]
@@ -344,6 +348,7 @@ model UserJawabanPenilaianKaru {
   id                    Int                 @id @default(autoincrement())
   idUserPenilaianKaru   String
   idMasterPenilaianKaru Int
+  Skor                  Int
   UserPenilaianKaru     UserPenilaianKaru   @relation(fields: [idUserPenilaianKaru], references: [id])
   MasterPenilaianKaru   MasterPenilaianKaru @relation(fields: [idMasterPenilaianKaru], references: [id])
 }

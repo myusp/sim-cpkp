@@ -38,8 +38,8 @@ const SelfAssesmenIndex = () => {
   const columns: ColumnType<ListAssesmenLogBookResponse["data"][0]>[] = [
     {
       title: 'Tanggal',
-      dataIndex: ['assesmen', "created_at"],
-      key: 'assesmen.created_at',
+      dataIndex: ['assesmen', "tanggal"],
+      key: 'assesmen.tanggal',
       render: (value) => {
         return dayjs(value).format("YYYY-MM-DD")
       }
@@ -51,10 +51,10 @@ const SelfAssesmenIndex = () => {
     },
     {
       title: 'LogBook',
-      dataIndex: ['assesmen', "id_penilaian"],
-      key: 'assesmen.id_penilaian',
+      dataIndex: ['logBookKaru'],
+      key: 'logBookKaru',
       render: (v) => {
-        if (v) {
+        if (v.length > 0) {
           return <Tag color='teal'>Sudah</Tag>
         } else {
           return <Tag color='red'>Belum</Tag>
