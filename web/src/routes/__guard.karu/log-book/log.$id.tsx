@@ -8,7 +8,7 @@ import { Button, Col, Input, message, notification, Row, Spin, Table } from 'ant
 import { ColumnType } from 'antd/es/table'
 import { MasterLogBookKaruActiveResponse, viewAssesmenHeadResponse } from 'app-type/response'
 import dayjs from 'dayjs'
-import { debounce } from 'lodash'
+import { debounce, sortBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 
 const LogBookKaru = () => {
@@ -32,7 +32,7 @@ const LogBookKaru = () => {
                 .then(([res, res2, apiAnswer]) => {
                     const tmpAnswer: Record<number, { answer: number, id: number }> = {}
                     // console.log(res)
-                    setQuestions(res)
+                    setQuestions(sortBy(res,["kategori","penilaian"]))
                     setAssesmenData(res2)
                     // console.log(apiAnswer)
                     if (apiAnswer.id) {

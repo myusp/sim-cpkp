@@ -44,8 +44,8 @@ const Report = () => {
     const columns: ColumnType<{ assesmen: UserAssesmen; akun: Akun & { MasterRuamhSakit?: MasterRumahSakit, MasterRuanganRS: MasterRuanganRS }; }>[] = [
         {
             title: 'Tanggal',
-            dataIndex: ['assesmen', "created_at"],
-            key: 'assesmen.created_at',
+            dataIndex: ['assesmen', "tanggal"],
+            key: 'assesmen.tanggal',
             render: (value) => {
                 return dayjs(value).format("YYYY-MM-DD")
             },
