@@ -117,7 +117,7 @@ const assessment: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             const { email } = await request.jwtDecode() as JwtPayload;
             const akun = await prisma.akun.findFirst({ where: { email } });
 
-            const today = dayjs().startOf('day').toDate();
+            // const today = dayjs().startOf('day').toDate();
 
             // Check if the user has already submitted an assessment today
             const existingAssessment = await prisma.userAssesmen.findFirst({
@@ -172,7 +172,7 @@ const assessment: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
                         skp_4: `${(100 * ScorPerSKP["SKP4"]) / groupedActiveQusetions["SKP4"].length}` || "0",
                         skp_5: `${(100 * ScorPerSKP["SKP5"]) / groupedActiveQusetions["SKP5"].length}` || "0",
                         skp_6: `${(100 * ScorPerSKP["SKP6"]) / groupedActiveQusetions["SKP6"].length}` || "0",
-                        updated_at: today,
+                        updated_at: dayjs().toDate(),
                         jawaban: {
                             deleteMany: {}, // Clear previous answers
                             create: jawabanData,
