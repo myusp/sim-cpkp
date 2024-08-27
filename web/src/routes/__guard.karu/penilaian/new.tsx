@@ -40,7 +40,7 @@ const PenilaianKaru = () => {
                     // console.log(apiAnswer)
 
                     res.forEach(q => {
-                        tmpAnswer[q.id] = { answer: 4, id: q.id }
+                        tmpAnswer[q.id] = { answer: 0, id: q.id }
                     })
 
                     setAnswer(tmpAnswer)
