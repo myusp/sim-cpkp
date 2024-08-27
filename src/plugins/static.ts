@@ -12,7 +12,7 @@ export default fp(async (fastify) => {
         root: join(__dirname, '..', 'web'), // Path to the React build directory
         prefix: '/app', // Serve files at the root URL path
         // extensions: ["js", "css", "html", "svg"]
-        maxAge: 60 * 60 * 24 * 1000
+        maxAge: 60 * 60  * 1000
     });
 
     // Serve index.html for any unmatched routes (for client-side routing in React)

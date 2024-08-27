@@ -137,9 +137,9 @@ const assessment: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             }
 
             if (existingAssessment) {
-                if (dayjs().diff(existingAssessment.tanggal, 'day') > 7 || existingAssessment.id_penilaian !== null) {
-                    return reply.status(403).send({ error: "Assessment cannot be updated after 7 days or once it has been reviewed." });
-                }
+                // if (dayjs().diff(existingAssessment.tanggal, 'day') > 7 || existingAssessment.id_penilaian !== null) {
+                //     return reply.status(403).send({ error: "Assessment cannot be updated after 7 days or once it has been reviewed." });
+                // }
                 const activeQuestions = await prisma.masterPertanyaanAssesmen.findMany({
                     where: {
                         id: { in: [...JSON.parse(existingAssessment?.id_master_pertanyaans || "[]")].map(s => parseInt(s)) },
