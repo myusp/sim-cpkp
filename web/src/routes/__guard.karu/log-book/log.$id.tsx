@@ -8,8 +8,15 @@ import { Button, Col, Input, message, notification, Row, Spin, Table } from 'ant
 import { ColumnType } from 'antd/es/table'
 import { MasterLogBookKaruActiveResponse, viewAssesmenHeadResponse } from 'app-type/response'
 import dayjs from 'dayjs'
-import { debounce, sortBy } from 'lodash'
+import { debounce } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
+
+function getKegiatanSortKey(kegiatan: string): [number, string] {
+    const parts = kegiatan.split(" ", 1)[0].split(".");
+    const mainNum = parseInt(parts[0]);
+    const subNum = parts.slice(1).join(".") || "";
+    return [mainNum, subNum];
+}
 
 const LogBookKaru = () => {
     const [questions, setQuestions] = useState<MasterLogBookKaruActiveResponse[]>([])
@@ -32,7 +39,23 @@ const LogBookKaru = () => {
                 .then(([res, res2, apiAnswer]) => {
                     const tmpAnswer: Record<number, { answer: number, id: number }> = {}
                     // console.log(res)
-                    setQuestions(sortBy(res,["skp","kegiatan"]))
+                    setQuestions(res.sort((a, b) => {
+                        // Urutkan berdasarkan 'skp' terlebih dahulu
+                        const skpComparison = a.skp.localeCompare(b.skp);
+                        if (skpComparison !== 0) {
+                            return skpComparison;
+                        }
+
+                        // Jika 'skp' sama, urutkan berdasarkan 'kegiatan'
+                        const [mainNumA, subNumA] = getKegiatanSortKey(a.kegiatan);
+                        const [mainNumB, subNumB] = getKegiatanSortKey(b.kegiatan);
+
+                        if (mainNumA !== mainNumB) {
+                            return mainNumA - mainNumB;
+                        }
+
+                        return subNumA.localeCompare(subNumB);
+                    }))
                     setAssesmenData(res2)
                     // console.log(apiAnswer)
                     if (apiAnswer.id) {
@@ -134,6 +157,10 @@ const LogBookKaru = () => {
         loadingHandler.close()
     }
 
+    const rightAnswer = useMemo<number>(() => {
+        return answerArray.filter(q => q.answer == 1).length
+    }, [answerArray])
+
     return <div className='bg-white rounded shadow md:p-6 p-2' >
         <Spin fullscreen spinning={loading} />
         <Row gutter={[16, 16]}>
@@ -159,8 +186,10 @@ const LogBookKaru = () => {
         </Row>
         <Row className='mb-4' gutter={[16, 16]}>
             <Col md={12} xs={24}>
-                Ya/Tidak : <span className='text-teal-600'>{answerArray.filter(q => q.answer == 1).length}</span>/<span className='text-red-600'>
-                    {answerArray.filter(q => q.answer != 1).length}
+                Ya/Tidak : <span className='text-teal-600'>
+                    {rightAnswer}</span>
+                /<span className='text-red-600'>
+                    {questions.length - rightAnswer}
                 </span></Col>
             <Col className='flex flex-row' md={12} xs={24}>
                 <Input.Search

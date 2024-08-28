@@ -5,12 +5,19 @@ import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant
 import { getLogBookKaru, addLogBookKaru, updateLogBookKaru, deleteLogBookKaru } from '@/services/logBookKaru';
 import { MasterLogBookKaru } from 'app-type/index';
 import { useDebouncedValue, useMounted } from '@mantine/hooks';
-import { debounce, sortBy } from 'lodash';
+import { debounce } from 'lodash';
 import SKPDropdown from '@/components/SKPDropdown';
 import dayjs from 'dayjs';
 
 const { Search } = Input;
 const { Option } = Select;
+
+function getKegiatanSortKey(kegiatan: string): [number, string] {
+    const parts = kegiatan.split(" ", 1)[0].split(".");
+    const mainNum = parseInt(parts[0]);
+    const subNum = parts.slice(1).join(".") || "";
+    return [mainNum, subNum];
+}
 
 const LogBookKaruManager: React.FC = () => {
     const [logBookList, setLogBookList] = useState<MasterLogBookKaru[]>([]);
@@ -111,7 +118,23 @@ const LogBookKaruManager: React.FC = () => {
         if (filterSKP) {
             filteredData = filteredData.filter((item) => item.skp === filterSKP);
         }
-        filteredData = sortBy(filteredData, ["skp", "kegiatan"])
+        filteredData = filteredData.sort((a, b) => {
+            // Urutkan berdasarkan 'skp' terlebih dahulu
+            const skpComparison = a.skp.localeCompare(b.skp);
+            if (skpComparison !== 0) {
+                return skpComparison;
+            }
+
+            // Jika 'skp' sama, urutkan berdasarkan 'kegiatan'
+            const [mainNumA, subNumA] = getKegiatanSortKey(a.kegiatan);
+            const [mainNumB, subNumB] = getKegiatanSortKey(b.kegiatan);
+
+            if (mainNumA !== mainNumB) {
+                return mainNumA - mainNumB;
+            }
+
+            return subNumA.localeCompare(subNumB);
+        })
 
         setFilteredList([...filteredData]);
     };
