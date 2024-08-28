@@ -5,7 +5,7 @@ import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant
 import { getLogBookKaru, addLogBookKaru, updateLogBookKaru, deleteLogBookKaru } from '@/services/logBookKaru';
 import { MasterLogBookKaru } from 'app-type/index';
 import { useDebouncedValue, useMounted } from '@mantine/hooks';
-import { debounce } from 'lodash';
+import { debounce, sortBy } from 'lodash';
 import SKPDropdown from '@/components/SKPDropdown';
 import dayjs from 'dayjs';
 
@@ -111,6 +111,7 @@ const LogBookKaruManager: React.FC = () => {
         if (filterSKP) {
             filteredData = filteredData.filter((item) => item.skp === filterSKP);
         }
+        filteredData = sortBy(filteredData, ["skp", "kegiatan"])
 
         setFilteredList([...filteredData]);
     };

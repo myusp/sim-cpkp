@@ -32,7 +32,7 @@ const LogBookKaru = () => {
                 .then(([res, res2, apiAnswer]) => {
                     const tmpAnswer: Record<number, { answer: number, id: number }> = {}
                     // console.log(res)
-                    setQuestions(sortBy(res,["kategori","penilaian"]))
+                    setQuestions(sortBy(res,["skp","kegiatan"]))
                     setAssesmenData(res2)
                     // console.log(apiAnswer)
                     if (apiAnswer.id) {
