@@ -1,0 +1,510 @@
+types/index.ts
+export type JwtPayload = {
+    email: string
+    name: string
+    role: string
+    id_rs: string | null
+    id_ruangan: string | null
+
+    created: number
+    iat?: number,
+    exp?: number
+}
+
+export interface User {
+    id: string;
+    jenisKelamin?: string;
+    alamatDomisili?: string;
+    alamatTinggal?: string;
+    mulaiBergabungRS?: Date;
+    mulaiBekerjaUnitTerakhir?: Date;
+    statusKepegawaian?: string;
+    asalInstitusiPendidikan?: string;
+    kelulusanTahun?: number;
+    tanggalTerbitSTR?: Date;
+    tanggalBerakhirSTR?: string;
+    tanggalTerbitSIPP?: Date;
+    jabatanSaatIni?: string;
+    levelPKSaatIni?: string;
+    levelPKYangDiajukan?: string;
+    levelPerawatManajer?: string;
+    programMutuRCA: boolean;
+    setuju: boolean;
+}
+
+export interface Akun {
+    iduser: string;
+    email: string;
+    password?: string;
+    last_login?: Date;
+    nama: string;
+    created_at: Date;
+    role: string;
+    pendidikanTerakhir?: string;
+    unitTempatBekerjaTerakhir?: string;
+    userId?: string;
+    masterRumahSakitId?: string;
+    masterRuanganRSId?: string;
+}
+
+export interface MasterRumahSakit {
+    id: string;
+    nama: string;
+}
+
+export interface MasterRuanganRS {
+    id: string;
+    nama: string;
+    id_rs: string;
+}
+
+export interface MasterOrientasi {
+    id: number;
+    value: string;
+}
+
+export interface MasterPelatihan {
+    id: number;
+    value: string;
+}
+
+export interface MasterCPD_PK1 {
+    id: number;
+    value: string;
+}
+
+export interface MasterCPD_PK2 {
+    id: number;
+    value: string;
+}
+
+export interface MasterCPD_PK3 {
+    id: number;
+    value: string;
+}
+
+export interface MasterCPD_PK4 {
+    id: number;
+    value: string;
+}
+
+export interface MasterCPD_PK5 {
+    id: number;
+    value: string;
+}
+
+export interface UserOrientasi {
+    id: string;
+    userId: string;
+    orientasiId: number;
+}
+
+export interface UserPelatihan {
+    id: string;
+    userId: string;
+    pelatihanId: number;
+}
+
+export interface UserCPD_PK1 {
+    id: number;
+    userId: string;
+    cpdId: number;
+}
+
+export interface UserCPD_PK2 {
+    id: number;
+    userId: string;
+    cpdId: number;
+}
+
+export interface UserCPD_PK3 {
+    id: number;
+    userId: string;
+    cpdId: number;
+}
+
+export interface UserCPD_PK4 {
+    id: number;
+    userId: string;
+    cpdId: number;
+}
+
+export interface UserCPD_PK5 {
+    id: number;
+    userId: string;
+    cpdId: number;
+}
+
+export interface MasterPertanyaanAssesmen {
+    id: number;
+    skp?: string;
+    sub_kategori?: string;
+    kode?: string;
+    keterampilan?: string;
+    vokasi?: string;
+    ners?: string;
+    tipe?: string;
+    priority?: number;
+    status: number;
+    created_at: Date;
+    updated_at: Date;
+}
+
+export interface UserAssesmen {
+    id: string;
+    tanggal: Date;
+    skp_1?: string;
+    skp_2?: string;
+    skp_3?: string;
+    skp_4?: string;
+    skp_5?: string;
+    skp_6?: string;
+    email: string;
+    id_penilaian?: string
+    created_at: Date;
+    updated_at: Date;
+}
+
+export interface UserJawabanAsesmen {
+    id: number;
+    jawaban: string;
+    skor: number;
+    created_at: Date;
+    UserAssesmenId: string;
+    MasterPertanyaanAssesmenId: number;
+}
+
+export interface MasterKeterampilanDiagnosis {
+    id: string;
+    nama_kompetensi: string;
+}
+
+export interface MasterKeterampilanIntervensi {
+    id: string;
+    nama_kompetensi: string;
+}
+
+export type MasterLogBookKaru = {
+    id: number;
+    skp: string;
+    kegiatan: string;
+    status: number;
+    created_at: Date;
+    updated_at: Date;
+};
+
+
+types/request.ts
+import { Akun, MasterPertanyaanAssesmen, User } from "."
+
+export type LoginRequest = {
+    email: string
+    password: string
+}
+
+export type UserByEmailRequest = {
+    email: string
+}
+
+export type UserResetPassRequest = {
+    email: string
+    newPassword: string
+}
+
+export type UpdateUserRequest = {
+    email: string
+    akun: Akun
+    user?: User
+    cpd_pk1?: number[]
+    cpd_pk2?: number[]
+    cpd_pk3?: number[]
+    cpd_pk4?: number[]
+    cpd_pk5?: number[]
+    orientasi?: number[]
+    pelatihan?: number[]
+}
+
+export type RoomRequest = {
+    hospital_id: string
+}
+
+export type RoomParams = {
+    room_id: string;
+};
+
+export type RoomBody = {
+    nama: string;
+    id_rs: string;
+};
+
+export type HospitalParams = {
+    hospital_id: string;
+};
+
+export type HospitalBody = {
+    nama: string;
+};
+
+export type CpdParams = {
+    pk: 'pk1' | 'pk2' | 'pk3' | 'pk4' | 'pk5';
+};
+
+export type CpdBody = {
+    value: string;
+};
+
+export type CreateUserRequest = {
+    email: string;
+    password: string;
+    nama: string;
+    role: string;
+    pendidikanTerakhir?: string;
+    unitTempatBekerjaTerakhir?: string;
+    userId?: string;
+    masterRumahSakitId?: string;
+    masterRuanganRSId?: string;
+};
+
+export type UserSearchRequest = {
+    keyword?: string;         // Kata kunci untuk mencari berdasarkan nama atau email
+    rumahSakitId?: string;    // ID Rumah Sakit untuk filter
+    ruanganId?: string;
+    role?: string;     // ID Ruangan untuk filter
+};
+
+// src/types/request.ts
+export interface UserAssessmentParams {
+    id: string;
+}
+
+export interface UserAssessmentCreateRequest {
+    id_master_pertanyaans: string[];
+    answers: { id: number, answer: string }[];
+    tanggal?: string
+}
+
+export interface UserAssessmentUpdateRequest {
+    id_user_assesmen: string
+    answers: { id: number, answer: string }[];
+}
+
+export interface UserAssessmentListParams {
+    email?: string
+    rumahSakitId?: string
+    ruanganRSId?: string
+    statusPenilaian?: number
+}
+
+
+export type MasterPertanyaanCreateRequest = Omit<MasterPertanyaanAssesmen, 'id' | 'created_at' | 'updated_at'>;
+
+export type MasterPertanyaanUpdateRequest = Partial<Omit<MasterPertanyaanAssesmen, 'created_at' | 'updated_at'>>;
+
+export type MasterPertanyaanParams = {
+    id: number;
+};
+
+export type MasterLogBookKaruCreateRequest = {
+    skp: string;
+    kegiatan: string;
+    status?: number;
+};
+
+export type MasterLogBookKaruUpdateRequest = Partial<Omit<MasterLogBookKaruCreateRequest, 'id'>>;
+
+export type MasterLogBookKaruParams = {
+    id: number;
+};
+
+export type MasterPenilaianKaruCreateRequest = {
+    kategori: string;
+    penilaian: string;
+    status?: number;
+};
+
+export type MasterPenilaianKaruUpdateRequest = Partial<Omit<MasterPenilaianKaruCreateRequest, 'id'>>;
+
+export type MasterPenilaianKaruParams = {
+    id: number;
+};
+
+export type UserLogbookKaruCreateRequest = {
+    id_master_logbook_karus: string[];
+    answers: { id: number, jawaban: number }[];
+    userAsesmenId: string;
+};
+
+export type UserLogbookKaruUpdateRequest = {
+    id_user_logbook_karu: string;
+    answers: { id: number, jawaban: number }[];
+};
+
+export interface UserLogbookKaruListRequest {
+    rumahSakitId: string
+    ruanganRSId: string
+}
+
+types/response.ts
+import { Akun, MasterPertanyaanAssesmen, MasterRuanganRS, MasterRumahSakit, User, UserAssesmen, UserCPD_PK1, UserCPD_PK2, UserCPD_PK3, UserCPD_PK4, UserCPD_PK5, UserOrientasi, UserPelatihan } from "."
+
+export type LoginResponse = {
+    token: string
+}
+
+export type UserDetailResponse = {
+    email: string
+    iduser: string
+    role: string
+    last_login: string
+    pendidikanTerakhir: unknown
+    unitTempatBekerjaTerakhir: unknown
+    MasterRuanganRS: unknown
+    masterRumahSakitId: unknown
+    masterRuanganRSId: unknown
+    created_at: string
+    nama: string
+}
+
+export type HospitalResponse = {
+    id: string;
+    nama: string;
+};
+
+export type RoomResponse = {
+    id: string;
+    nama: string;
+    id_rs: string;
+};
+
+export type CpdResponse = {
+    id: number;
+    value: string;
+    pk: 'pk1' | 'pk2' | 'pk3' | 'pk4' | 'pk5';
+};
+
+
+export type CpdListResponse = CpdResponse[]
+
+export type ErrorResponse = {
+    error: string;
+};
+
+
+export type UserResponse = {
+    iduser: string;
+    email: string;
+    nama: string;
+    role: string;
+    pendidikanTerakhir?: string;
+    unitTempatBekerjaTerakhir?: string;
+    created_at: Date;
+    masterRumahSakitId?: string;
+    masterRuanganRSId?: string;
+};
+
+
+export type UpdateUserResponse = {
+    email: string
+    akun: Akun
+    user: User
+    cpd_pk1: number[]
+    cpd_pk2: number[]
+    cpd_pk3: number[]
+    cpd_pk4: number[]
+    cpd_pk5: number[]
+    orientasi: number[]
+    pelatihan: number[]
+}
+
+export type UserResetPassResponse = {
+    message: string;
+};
+
+export type UserSearchResponse = Akun[];
+
+// Menggabungkan tipe-tipe yang telah didefinisikan sebelumnya menjadi satu tipe composite
+export interface UserByEmailResponse {
+    email: string;
+    iduser: string;
+    role: string;
+    last_login: Date | null;
+    pendidikanTerakhir: string;
+    unitTempatBekerjaTerakhir: string | null;
+    masterRuanganRSId: string;
+    MasterRuanganRS: MasterRuanganRS;
+    masterRumahSakitId: string;
+    MasterRumahSakit: MasterRumahSakit;
+    created_at: Date;
+    User: UserDetails; // Berisi data user detail termasuk CPD, orientasi, pelatihan, dll.
+}
+
+// Menggabungkan bagian-bagian yang ada dalam User
+export interface UserDetails extends User {
+    cpdForPK1: UserCPD_PK1[];
+    cpdForPK2: UserCPD_PK2[];
+    cpdForPK3: UserCPD_PK3[];
+    cpdForPK4: UserCPD_PK4[];
+    cpdForPK5: UserCPD_PK5[];
+    orientasiYangDiikuti: UserOrientasi[];
+    pelatihanYangDiikuti: UserPelatihan[];
+}
+
+
+export type MasterPertanyaanResponse = MasterPertanyaanAssesmen;
+
+export type MasterPertanyaanActiveResponse = Omit<MasterPertanyaanAssesmen, 'vokasi' | 'ners'>;
+
+export interface UserAssessmentResponse {
+    id: string;
+    skp_1: number;
+    skp_2: number;
+    skp_3: number;
+    skp_4: number;
+    skp_5: number;
+    skp_6: number;
+    id_master_pertanyaans: string[];
+    answers: { id: number, answer: string }[];
+}
+
+export interface UserAssessmentViewResponse {
+    assesmen: UserAssesmen
+    answer: { answer: string, id: number }[],
+    questions: Omit<MasterPertanyaanAssesmen, "created_at" | "updated_at" | "status">[]
+}
+
+export interface UserAssessmentListResponse {
+    data: { assesmen: UserAssesmen, akun: Akun & { MasterRumahSakit?: MasterRumahSakit, MasterRuanganRS?: MasterRuanganRS } }[]
+}
+
+export type MasterLogBookKaruResponse = {
+    id: number;
+    skp: string;
+    kegiatan: string;
+    status: number;
+    created_at: Date;
+    updated_at: Date;
+};
+
+export type MasterLogBookKaruActiveResponse = Omit<MasterLogBookKaruResponse, 'status'>;
+
+export type MasterPenilaianKaruResponse = {
+    id: number;
+    kategori: string;
+    penilaian: string;
+    status: number;
+    created_at: Date;
+    updated_at: Date;
+};
+
+export type MasterPenilaianKaruActiveResponse = Omit<MasterPenilaianKaruResponse, 'status'>;
+
+export interface UserLogbookKaruResponse {
+    id: string;
+    id_master_logbook_karus: string[];
+    answers: { id: number, jawaban: number }[];
+}
+
+
+
+
+
