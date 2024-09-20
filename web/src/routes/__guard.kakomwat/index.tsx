@@ -18,7 +18,7 @@ const PerawatIndexPage = () => {
   };
 
   const openTutorial = () => {
-    const url = 'https://youtu.be/5GfpJO6aE_k';
+    const url = 'https://youtu.be/X8GjaYEwmvk';
     window.open(url, '_blank');
   }
 
