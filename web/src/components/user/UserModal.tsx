@@ -9,10 +9,13 @@ import PendidikanDropdown from '../LastEducationDropdown';  // Import komponen P
 interface UserModalProps {
     visible: boolean;
     onCancel: () => void;
-    onOk: (values: any) => void;
+    onOk: (values: never) => void;
     initialValues?: any;
     isEdit?: boolean;
 }
+
+const rolesNeedRSField = ['perawat', 'karu', 'kainstal', 'kakomwat']
+const rolesNeedRuanganField = ['perawat', 'karu']
 
 const UserModal: React.FC<UserModalProps> = ({ visible, onCancel, onOk, initialValues, isEdit = false }) => {
     const [form] = Form.useForm();
@@ -39,7 +42,7 @@ const UserModal: React.FC<UserModalProps> = ({ visible, onCancel, onOk, initialV
                     .validateFields()
                     .then(values => {
                         setLoadingOpen();
-                        onOk(values);
+                        onOk(values as never);
                         form.resetFields();
                     })
                     .finally(() => {
@@ -92,7 +95,7 @@ const UserModal: React.FC<UserModalProps> = ({ visible, onCancel, onOk, initialV
                     noStyle
                 >
                     {({ getFieldValue }) =>
-                        (getFieldValue('role') === 'perawat' || getFieldValue('role') === 'karu') && (
+                        (rolesNeedRSField.includes(getFieldValue("role"))) && (
                             <Form.Item
                                 name="masterRumahSakitId"
                                 label="Rumah Sakit"
@@ -110,7 +113,7 @@ const UserModal: React.FC<UserModalProps> = ({ visible, onCancel, onOk, initialV
                     noStyle
                 >
                     {({ getFieldValue }) =>
-                        (getFieldValue('role') === 'perawat' || getFieldValue('role') === 'karu') && (
+                        (rolesNeedRuanganField.includes(getFieldValue("role"))) && (
                             <Form.Item
                                 name="masterRuanganRSId"
                                 label="Ruangan"

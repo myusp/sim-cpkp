@@ -37,25 +37,27 @@ model User {
 }
 
 model Akun {
-  iduser                    String              @id @default(uuid())
-  email                     String              @unique
-  password                  String
-  last_login                DateTime?
-  nama                      String
-  role                      String
-  pendidikanTerakhir        PendidikanTerakhir?
-  unitTempatBekerjaTerakhir String?
-  userId                    String?
-  masterRumahSakitId        String?
-  masterRuanganRSId         String?
-  created_at                DateTime            @default(now())
-  MasterRuanganRS           MasterRuanganRS?    @relation("AkunRuanganRS", fields: [masterRuanganRSId], references: [id])
-  MasterRumahSakit          MasterRumahSakit?   @relation("AkunRumahSakit", fields: [masterRumahSakitId], references: [id])
-  User                      User?               @relation(fields: [userId], references: [id])
-  UserAssesmen              UserAssesmen[]
-  UserLogbookKaru           UserLogbookKaru?
-  UserPenilaianKaruPerawat  UserPenilaianKaru[] @relation("akun-perawat")
-  UserPenilaianKaru         UserPenilaianKaru[]
+  iduser                                                                     String                    @id @default(uuid())
+  email                                                                      String                    @unique
+  password                                                                   String
+  last_login                                                                 DateTime?
+  nama                                                                       String
+  role                                                                       String
+  pendidikanTerakhir                                                         PendidikanTerakhir?
+  unitTempatBekerjaTerakhir                                                  String?
+  userId                                                                     String?
+  masterRumahSakitId                                                         String?
+  masterRuanganRSId                                                          String?
+  created_at                                                                 DateTime                  @default(now())
+  MasterRuanganRS                                                            MasterRuanganRS?          @relation("AkunRuanganRS", fields: [masterRuanganRSId], references: [id])
+  MasterRumahSakit                                                           MasterRumahSakit?         @relation("AkunRumahSakit", fields: [masterRumahSakitId], references: [id])
+  User                                                                       User?                     @relation(fields: [userId], references: [id])
+  UserAssesmen                                                               UserAssesmen[]
+  UserLogbookKaru                                                            UserLogbookKaru?
+  UserPenilaianKaruPerawat                                                   UserPenilaianKaru[]       @relation("akun-perawat")
+  UserPenilaianKaru                                                          UserPenilaianKaru[]
+  UserRekomendasiKainstal_UserRekomendasiKainstal_email_user_kainstallToAkun UserRekomendasiKainstal[] @relation("UserRekomendasiKainstal_email_user_kainstallToAkun")
+  UserRekomendasiKainstal_UserRekomendasiKainstal_email_user_kakomwatToAkun  UserRekomendasiKainstal[] @relation("UserRekomendasiKainstal_email_user_kakomwatToAkun")
 
   @@index([masterRuanganRSId], map: "Akun_masterRuanganRSId_fkey")
   @@index([masterRumahSakitId], map: "Akun_masterRumahSakitId_fkey")
@@ -63,18 +65,20 @@ model Akun {
 }
 
 model MasterRumahSakit {
-  id        String            @id @default(uuid())
-  nama      String
-  akun      Akun[]            @relation("AkunRumahSakit")
-  ruanganRS MasterRuanganRS[] @relation("RumahSakitToRuanganRS")
+  id                      String                    @id @default(uuid())
+  nama                    String
+  akun                    Akun[]                    @relation("AkunRumahSakit")
+  ruanganRS               MasterRuanganRS[]         @relation("RumahSakitToRuanganRS")
+  UserRekomendasiKainstal UserRekomendasiKainstal[]
 }
 
 model MasterRuanganRS {
-  id         String           @id @default(uuid())
-  nama       String
-  id_rs      String
-  akun       Akun[]           @relation("AkunRuanganRS")
-  rumahSakit MasterRumahSakit @relation("RumahSakitToRuanganRS", fields: [id_rs], references: [id])
+  id                      String                    @id @default(uuid())
+  nama                    String
+  id_rs                   String
+  akun                    Akun[]                    @relation("AkunRuanganRS")
+  rumahSakit              MasterRumahSakit          @relation("RumahSakitToRuanganRS", fields: [id_rs], references: [id])
+  UserRekomendasiKainstal UserRekomendasiKainstal[]
 
   @@index([id_rs], map: "MasterRuanganRS_id_rs_fkey")
 }
@@ -251,16 +255,6 @@ model UserJawabanAsesmen {
   @@index([UserAssesmenId], map: "UserJawabanAsesmen_UserAssesmenId_fkey")
 }
 
-model MasterKeterampilanDiagnosis {
-  id              String @id
-  nama_kompetensi String
-}
-
-model MasterKeterampilanIntervensi {
-  id              String @id
-  nama_kompetensi String
-}
-
 model MasterLogBookKaru {
   id                     Int                      @id @default(autoincrement())
   skp                    String
@@ -310,18 +304,20 @@ model MasterPenilaianKaru {
 }
 
 model UserPenilaianKaru {
-  id                       String                     @id @default(uuid())
-  email                    String
-  score                    Float                      @default(0)
-  idMasterPenilaianKaru    String                     @db.Text
-  created_at               DateTime                   @default(now())
-  updated_at               DateTime                   @default(now()) @updatedAt
-  email_perawat            String?                    @db.VarChar(100)
-  tanggal                  String?                    @db.VarChar(100)
-  UserAssesmen             UserAssesmen[]
-  UserJawabanPenilaianKaru UserJawabanPenilaianKaru[]
-  AkunPerawat              Akun?                      @relation("akun-perawat", fields: [email_perawat], references: [email], onDelete: Restrict, onUpdate: Restrict, map: "UserPenilaianKaru_Akun_FK")
-  Akun                     Akun                       @relation(fields: [email], references: [email])
+  id                        String                     @id @default(uuid())
+  email                     String
+  score                     Float                      @default(0)
+  idMasterPenilaianKaru     String                     @db.Text
+  created_at                DateTime                   @default(now())
+  updated_at                DateTime                   @default(now()) @updatedAt
+  email_perawat             String?                    @db.VarChar(100)
+  tanggal                   String?                    @db.VarChar(100)
+  userRekomendasiKainstalId BigInt?
+  UserAssesmen              UserAssesmen[]
+  UserJawabanPenilaianKaru  UserJawabanPenilaianKaru[]
+  AkunPerawat               Akun?                      @relation("akun-perawat", fields: [email_perawat], references: [email], onDelete: Restrict, onUpdate: Restrict, map: "UserPenilaianKaru_Akun_FK")
+  Akun                      Akun                       @relation(fields: [email], references: [email])
+  UserRekomendasiKainstal   UserRekomendasiKainstal[]
 
   @@index([email], map: "UserPenilaianKaru_email_fkey")
   @@index([email_perawat], map: "UserPenilaianKaru_Akun_FK")
@@ -337,6 +333,36 @@ model UserJawabanPenilaianKaru {
 
   @@index([idMasterPenilaianKaru], map: "UserJawabanPenilaianKaru_idMasterPenilaianKaru_fkey")
   @@index([idUserPenilaianKaru], map: "UserJawabanPenilaianKaru_idUserPenilaianKaru_fkey")
+}
+
+model UserRekomendasiKainstal {
+  id                                                      BigInt             @id @default(autoincrement())
+  id_user_penilaian_karu                                  String?
+  idMasterRumahSakit                                      String?
+  idMasterRuanganRS                                       String?
+  total_scrore_skp1                                       Float?             @db.Float
+  total_scrore_skp2                                       Float?             @db.Float
+  total_scrore_skp3                                       Float?             @db.Float
+  total_scrore_skp4                                       Float?             @db.Float
+  total_scrore_skp5                                       Float?             @db.Float
+  total_scrore_skp6                                       Float?             @db.Float
+  email_user_kainstall                                    String?            @db.VarChar(50)
+  feedback_to_karu                                        String?            @db.VarChar(100)
+  email_user_kakomwat                                     String?            @db.VarChar(50)
+  submited_at                                             DateTime?          @db.DateTime(0)
+  approved_at                                             DateTime?          @db.DateTime(0)
+  status_approval                                         String
+  Akun_UserRekomendasiKainstal_email_user_kainstallToAkun Akun?              @relation("UserRekomendasiKainstal_email_user_kainstallToAkun", fields: [email_user_kainstall], references: [email], onDelete: Restrict, onUpdate: Restrict, map: "UserRekomendasiKainstal_Akun_FK")
+  Akun_UserRekomendasiKainstal_email_user_kakomwatToAkun  Akun?              @relation("UserRekomendasiKainstal_email_user_kakomwatToAkun", fields: [email_user_kakomwat], references: [email], onDelete: Restrict, onUpdate: Restrict, map: "UserRekomendasiKainstal_Akun_FK_1")
+  MasterRuanganRS                                         MasterRuanganRS?   @relation(fields: [idMasterRuanganRS], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "UserRekomendasiKainstal_MasterRuanganRS_FK")
+  MasterRumahSakit                                        MasterRumahSakit?  @relation(fields: [idMasterRumahSakit], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "UserRekomendasiKainstal_MasterRumahSakit_FK")
+  UserPenilaianKaru                                       UserPenilaianKaru? @relation(fields: [id_user_penilaian_karu], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "UserRekomendasiKainstal_UserPenilaianKaru_FK")
+
+  @@index([email_user_kainstall], map: "UserRekomendasiKainstal_Akun_FK")
+  @@index([email_user_kakomwat], map: "UserRekomendasiKainstal_Akun_FK_1")
+  @@index([idMasterRuanganRS], map: "UserRekomendasiKainstal_MasterRuanganRS_FK")
+  @@index([idMasterRumahSakit], map: "UserRekomendasiKainstal_MasterRumahSakit_FK")
+  @@index([id_user_penilaian_karu], map: "UserRekomendasiKainstal_UserPenilaianKaru_FK")
 }
 
 enum PendidikanTerakhir {

@@ -18,10 +18,14 @@ import { Route as AboutImport } from './routes/about'
 import { Route as guardImport } from './routes/__guard'
 import { Route as guardPerawatIndexImport } from './routes/__guard.perawat/index'
 import { Route as guardKaruIndexImport } from './routes/__guard.karu/index'
+import { Route as guardKakomwatIndexImport } from './routes/__guard.kakomwat/index'
+import { Route as guardKainstalIndexImport } from './routes/__guard.kainstal/index'
 import { Route as guardAdminIndexImport } from './routes/__guard.admin/index'
 import { Route as guardPerawatSelfAssesmenIndexImport } from './routes/__guard.perawat/self-assesmen/index'
 import { Route as guardKaruPenilaianIndexImport } from './routes/__guard.karu/penilaian/index'
 import { Route as guardKaruLogBookIndexImport } from './routes/__guard.karu/log-book/index'
+import { Route as guardKakomwatRekomendasiIndexImport } from './routes/__guard.kakomwat/rekomendasi/index'
+import { Route as guardKainstalFeedbackIndexImport } from './routes/__guard.kainstal/feedback/index'
 import { Route as guardAdminReportIndexImport } from './routes/__guard.admin/report/index'
 import { Route as guardPerawatSelfAssesmenNewImport } from './routes/__guard.perawat/self-assesmen/new'
 import { Route as guardKaruPenilaianNewImport } from './routes/__guard.karu/penilaian/new'
@@ -37,6 +41,8 @@ import { Route as guardPerawatSelfAssesmenEditIdImport } from './routes/__guard.
 import { Route as guardKaruPenilaianViewIdImport } from './routes/__guard.karu/penilaian/view.$id'
 import { Route as guardKaruLogBookViewAssessIdImport } from './routes/__guard.karu/log-book/view-assess.$id'
 import { Route as guardKaruLogBookLogIdImport } from './routes/__guard.karu/log-book/log.$id'
+import { Route as guardKakomwatRekomendasiPenilaianIdImport } from './routes/__guard.kakomwat/rekomendasi/penilaian.$id'
+import { Route as guardKainstalFeedbackPenilaianIdImport } from './routes/__guard.kainstal/feedback/penilaian.$id'
 
 // Create Virtual Routes
 
@@ -74,6 +80,16 @@ const guardKaruIndexRoute = guardKaruIndexImport.update({
   getParentRoute: () => guardRoute,
 } as any)
 
+const guardKakomwatIndexRoute = guardKakomwatIndexImport.update({
+  path: '/kakomwat/',
+  getParentRoute: () => guardRoute,
+} as any)
+
+const guardKainstalIndexRoute = guardKainstalIndexImport.update({
+  path: '/kainstal/',
+  getParentRoute: () => guardRoute,
+} as any)
+
 const guardAdminIndexRoute = guardAdminIndexImport.update({
   path: '/admin/',
   getParentRoute: () => guardRoute,
@@ -94,6 +110,19 @@ const guardKaruLogBookIndexRoute = guardKaruLogBookIndexImport.update({
   path: '/karu/log-book/',
   getParentRoute: () => guardRoute,
 } as any)
+
+const guardKakomwatRekomendasiIndexRoute =
+  guardKakomwatRekomendasiIndexImport.update({
+    path: '/kakomwat/rekomendasi/',
+    getParentRoute: () => guardRoute,
+  } as any)
+
+const guardKainstalFeedbackIndexRoute = guardKainstalFeedbackIndexImport.update(
+  {
+    path: '/kainstal/feedback/',
+    getParentRoute: () => guardRoute,
+  } as any,
+)
 
 const guardAdminReportIndexRoute = guardAdminReportIndexImport.update({
   path: '/admin/report/',
@@ -173,6 +202,18 @@ const guardKaruLogBookLogIdRoute = guardKaruLogBookLogIdImport.update({
   getParentRoute: () => guardRoute,
 } as any)
 
+const guardKakomwatRekomendasiPenilaianIdRoute =
+  guardKakomwatRekomendasiPenilaianIdImport.update({
+    path: '/kakomwat/rekomendasi/penilaian/$id',
+    getParentRoute: () => guardRoute,
+  } as any)
+
+const guardKainstalFeedbackPenilaianIdRoute =
+  guardKainstalFeedbackPenilaianIdImport.update({
+    path: '/kainstal/feedback/penilaian/$id',
+    getParentRoute: () => guardRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -210,6 +251,20 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof guardAdminIndexImport
+      parentRoute: typeof guardImport
+    }
+    '/__guard/kainstal/': {
+      id: '/__guard/kainstal/'
+      path: '/kainstal'
+      fullPath: '/kainstal'
+      preLoaderRoute: typeof guardKainstalIndexImport
+      parentRoute: typeof guardImport
+    }
+    '/__guard/kakomwat/': {
+      id: '/__guard/kakomwat/'
+      path: '/kakomwat'
+      fullPath: '/kakomwat'
+      preLoaderRoute: typeof guardKakomwatIndexImport
       parentRoute: typeof guardImport
     }
     '/__guard/karu/': {
@@ -303,6 +358,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof guardAdminReportIndexImport
       parentRoute: typeof guardImport
     }
+    '/__guard/kainstal/feedback/': {
+      id: '/__guard/kainstal/feedback/'
+      path: '/kainstal/feedback'
+      fullPath: '/kainstal/feedback'
+      preLoaderRoute: typeof guardKainstalFeedbackIndexImport
+      parentRoute: typeof guardImport
+    }
+    '/__guard/kakomwat/rekomendasi/': {
+      id: '/__guard/kakomwat/rekomendasi/'
+      path: '/kakomwat/rekomendasi'
+      fullPath: '/kakomwat/rekomendasi'
+      preLoaderRoute: typeof guardKakomwatRekomendasiIndexImport
+      parentRoute: typeof guardImport
+    }
     '/__guard/karu/log-book/': {
       id: '/__guard/karu/log-book/'
       path: '/karu/log-book'
@@ -322,6 +391,20 @@ declare module '@tanstack/react-router' {
       path: '/perawat/self-assesmen'
       fullPath: '/perawat/self-assesmen'
       preLoaderRoute: typeof guardPerawatSelfAssesmenIndexImport
+      parentRoute: typeof guardImport
+    }
+    '/__guard/kainstal/feedback/penilaian/$id': {
+      id: '/__guard/kainstal/feedback/penilaian/$id'
+      path: '/kainstal/feedback/penilaian/$id'
+      fullPath: '/kainstal/feedback/penilaian/$id'
+      preLoaderRoute: typeof guardKainstalFeedbackPenilaianIdImport
+      parentRoute: typeof guardImport
+    }
+    '/__guard/kakomwat/rekomendasi/penilaian/$id': {
+      id: '/__guard/kakomwat/rekomendasi/penilaian/$id'
+      path: '/kakomwat/rekomendasi/penilaian/$id'
+      fullPath: '/kakomwat/rekomendasi/penilaian/$id'
+      preLoaderRoute: typeof guardKakomwatRekomendasiPenilaianIdImport
       parentRoute: typeof guardImport
     }
     '/__guard/karu/log-book/log/$id': {
@@ -361,6 +444,8 @@ export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
   guardRoute: guardRoute.addChildren({
     guardAdminIndexRoute,
+    guardKainstalIndexRoute,
+    guardKakomwatIndexRoute,
     guardKaruIndexRoute,
     guardPerawatIndexRoute,
     guardAdminDataAkunRoute,
@@ -374,9 +459,13 @@ export const routeTree = rootRoute.addChildren({
     guardKaruPenilaianNewRoute,
     guardPerawatSelfAssesmenNewRoute,
     guardAdminReportIndexRoute,
+    guardKainstalFeedbackIndexRoute,
+    guardKakomwatRekomendasiIndexRoute,
     guardKaruLogBookIndexRoute,
     guardKaruPenilaianIndexRoute,
     guardPerawatSelfAssesmenIndexRoute,
+    guardKainstalFeedbackPenilaianIdRoute,
+    guardKakomwatRekomendasiPenilaianIdRoute,
     guardKaruLogBookLogIdRoute,
     guardKaruLogBookViewAssessIdRoute,
     guardKaruPenilaianViewIdRoute,
@@ -407,6 +496,8 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__guard.tsx",
       "children": [
         "/__guard/admin/",
+        "/__guard/kainstal/",
+        "/__guard/kakomwat/",
         "/__guard/karu/",
         "/__guard/perawat/",
         "/__guard/admin/data/akun",
@@ -420,9 +511,13 @@ export const routeTree = rootRoute.addChildren({
         "/__guard/karu/penilaian/new",
         "/__guard/perawat/self-assesmen/new",
         "/__guard/admin/report/",
+        "/__guard/kainstal/feedback/",
+        "/__guard/kakomwat/rekomendasi/",
         "/__guard/karu/log-book/",
         "/__guard/karu/penilaian/",
         "/__guard/perawat/self-assesmen/",
+        "/__guard/kainstal/feedback/penilaian/$id",
+        "/__guard/kakomwat/rekomendasi/penilaian/$id",
         "/__guard/karu/log-book/log/$id",
         "/__guard/karu/log-book/view-assess/$id",
         "/__guard/karu/penilaian/view/$id",
@@ -437,6 +532,14 @@ export const routeTree = rootRoute.addChildren({
     },
     "/__guard/admin/": {
       "filePath": "__guard.admin/index.tsx",
+      "parent": "/__guard"
+    },
+    "/__guard/kainstal/": {
+      "filePath": "__guard.kainstal/index.tsx",
+      "parent": "/__guard"
+    },
+    "/__guard/kakomwat/": {
+      "filePath": "__guard.kakomwat/index.tsx",
       "parent": "/__guard"
     },
     "/__guard/karu/": {
@@ -491,6 +594,14 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__guard.admin/report/index.tsx",
       "parent": "/__guard"
     },
+    "/__guard/kainstal/feedback/": {
+      "filePath": "__guard.kainstal/feedback/index.tsx",
+      "parent": "/__guard"
+    },
+    "/__guard/kakomwat/rekomendasi/": {
+      "filePath": "__guard.kakomwat/rekomendasi/index.tsx",
+      "parent": "/__guard"
+    },
     "/__guard/karu/log-book/": {
       "filePath": "__guard.karu/log-book/index.tsx",
       "parent": "/__guard"
@@ -501,6 +612,14 @@ export const routeTree = rootRoute.addChildren({
     },
     "/__guard/perawat/self-assesmen/": {
       "filePath": "__guard.perawat/self-assesmen/index.tsx",
+      "parent": "/__guard"
+    },
+    "/__guard/kainstal/feedback/penilaian/$id": {
+      "filePath": "__guard.kainstal/feedback/penilaian.$id.tsx",
+      "parent": "/__guard"
+    },
+    "/__guard/kakomwat/rekomendasi/penilaian/$id": {
+      "filePath": "__guard.kakomwat/rekomendasi/penilaian.$id.tsx",
       "parent": "/__guard"
     },
     "/__guard/karu/log-book/log/$id": {

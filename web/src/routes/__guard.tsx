@@ -110,6 +110,34 @@ const menuPerawat: MenuProps['items'] = [
     // Tambahkan item menu lain yang sesuai dengan peran Perawat
 ];
 
+const menuKainstal: MenuProps['items'] = [
+    {
+        key: "/kainstal",
+        label: <Link to='/kainstal'>Home</Link>,
+        icon: <HomeOutlined />,
+    },
+    {
+        key: "/kainstal/feedback",
+        label: <Link to='/kainstal/feedback'>Feedback</Link>,
+        icon: <BookOutlined />,
+    },
+    // Tambahkan item menu lain yang sesuai dengan peran Perawat
+];
+
+const menuKakomwat: MenuProps['items'] = [
+    {
+        key: "/kakomwat",
+        label: <Link to='/kakomwat' params={{ id: "" }}>Home</Link>,
+        icon: <HomeOutlined />,
+    },
+    {
+        key: "/kakomwat/rekomendasi",
+        label: <Link to='/kakomwat/rekomendasi' params={{ id: "" }}>Rekomendasi</Link>,
+        icon: <BookOutlined />,
+    },
+    // Tambahkan item menu lain yang sesuai dengan peran Perawat
+];
+
 const GuardSession = () => {
     const { user, auth, isLoggedIn, isAppReady } = useAppContext();
     const location = useLocation();
@@ -132,6 +160,10 @@ const GuardSession = () => {
                 return menuKaru;
             case 'perawat':
                 return menuPerawat;
+            case 'kainstal':
+                return menuKainstal
+            case 'kakomwat':
+                return menuKakomwat
             default:
                 return [];
         }

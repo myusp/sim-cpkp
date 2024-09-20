@@ -15,6 +15,8 @@ const RoleDropdown: React.FC<RoleDropdownProps> = ({ onChange, value, disabled }
             <Option value="admin">Admin</Option>
             <Option value="karu">Karu</Option>
             <Option value="perawat">Perawat</Option>
+            <Option value="kainstal">Kainstal</Option>
+            <Option value="kakomwat">Kakomwat</Option>
         </Select>
     );
 };
