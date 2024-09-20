@@ -12,11 +12,16 @@ export default fp(async (fastify) => {
         root: join(__dirname, '..', 'web'), // Path to the React build directory
         prefix: '/app', // Serve files at the root URL path
         // extensions: ["js", "css", "html", "svg"]
-        maxAge: 60 * 60  * 1000
+        maxAge: 60 * 60 * 1000
     });
 
     // Serve index.html for any unmatched routes (for client-side routing in React)
     fastify.setNotFoundHandler((request, reply) => {
-        reply.sendFile('index.html'); // Make sure index.html exists in the dist directory
+        if (!request.url.includes("/api")) {
+            reply.sendFile('index.html')
+        } else {
+            reply.status(404).send("service not found")
+        }
+        ; // Make sure index.html exists in the dist directory
     });
 });
