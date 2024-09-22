@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate } from '@tanstack/react-router';
-import { HomeOutlined, BellOutlined, BookOutlined, UserOutlined, ReadOutlined, MenuOutlined, LogoutOutlined, DotChartOutlined } from '@ant-design/icons';
+import { HomeOutlined, BookOutlined, UserOutlined, ReadOutlined, MenuOutlined, LogoutOutlined, DotChartOutlined, CalendarOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout, Menu, theme, Image, Badge, Button, Drawer, Dropdown, message } from 'antd';
+import { Layout, Menu, theme, Image, Button, Drawer, Dropdown, message } from 'antd';
 import UserAvatar from '@/components/UserAvatar';
 import Typography from 'antd/es/typography/Typography';
 import { useState, useMemo, useEffect } from 'react';
@@ -11,6 +11,7 @@ import EditUserModal from '@/components/user/EditUserModal';
 import { updateUserService } from '@/services/user';
 import { Akun } from 'app-type/index';
 import { UpdateUserRequest } from 'app-type/request';
+import ButtonNotificationUser from '@/components/ButtonNotificationUser';
 
 const { Header, Sider } = Layout;
 
@@ -82,6 +83,11 @@ const menuKaru: MenuProps['items'] = [
         key: "/karu/dashboard",
         label: <Link to='/karu'>Dashboard Karu</Link>,
         icon: <HomeOutlined />,
+    },
+    {
+        key: "/karu/monitoring",
+        label: <Link to='/karu/monitoring'>Monitoring</Link>,
+        icon: <CalendarOutlined />,
     },
     {
         key: "/karu/log-book",
@@ -254,9 +260,9 @@ const GuardSession = () => {
                         is_edit_by_personal
                         title='Edit Profil'
                     />
-                    <Badge className='mr-4' size="small">
-                        <BellOutlined style={{ fontSize: 25, color: "white" }} />
-                    </Badge>
+
+                    {user?.role == "perawat" && <ButtonNotificationUser />}
+
                     <Dropdown
                         menu={{
                             items: [

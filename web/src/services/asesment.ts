@@ -56,3 +56,36 @@ export const viewAssesmenHead = async (param: UserAssessmentParams): Promise<vie
         throw error;
     }
 };
+
+export type ListUserAsesmenStatusResponse = Array<{
+    user: {
+        email: string
+        nama: string
+    }
+    asesmen?: {
+        id: string
+        skp_1: string
+        skp_2: string
+        skp_3: string
+        skp_4: string
+        skp_5: string
+        skp_6: string
+        email: string
+    }
+    status: boolean
+}>
+
+
+export const listUserAsesmenStatus = async (param: { ruanganRSId: string, rumahSakitId: string, tgl: string }): Promise<ListUserAsesmenStatusResponse> => {
+    try {
+        const resp = await axiosInstance.get<ListUserAsesmenStatusResponse>('/api/assesment/list-user-status', {
+            params: {
+                ...param
+            }
+        });
+        return resp.data
+    } catch (error) {
+        console.error('Error submitting assessment:', error);
+        throw error;
+    }
+};

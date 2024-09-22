@@ -23,6 +23,7 @@ import { Route as guardKainstalIndexImport } from './routes/__guard.kainstal/ind
 import { Route as guardAdminIndexImport } from './routes/__guard.admin/index'
 import { Route as guardPerawatSelfAssesmenIndexImport } from './routes/__guard.perawat/self-assesmen/index'
 import { Route as guardKaruPenilaianIndexImport } from './routes/__guard.karu/penilaian/index'
+import { Route as guardKaruMonitoringIndexImport } from './routes/__guard.karu/monitoring/index'
 import { Route as guardKaruLogBookIndexImport } from './routes/__guard.karu/log-book/index'
 import { Route as guardKakomwatRekomendasiIndexImport } from './routes/__guard.kakomwat/rekomendasi/index'
 import { Route as guardKainstalFeedbackIndexImport } from './routes/__guard.kainstal/feedback/index'
@@ -103,6 +104,11 @@ const guardPerawatSelfAssesmenIndexRoute =
 
 const guardKaruPenilaianIndexRoute = guardKaruPenilaianIndexImport.update({
   path: '/karu/penilaian/',
+  getParentRoute: () => guardRoute,
+} as any)
+
+const guardKaruMonitoringIndexRoute = guardKaruMonitoringIndexImport.update({
+  path: '/karu/monitoring/',
   getParentRoute: () => guardRoute,
 } as any)
 
@@ -379,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof guardKaruLogBookIndexImport
       parentRoute: typeof guardImport
     }
+    '/__guard/karu/monitoring/': {
+      id: '/__guard/karu/monitoring/'
+      path: '/karu/monitoring'
+      fullPath: '/karu/monitoring'
+      preLoaderRoute: typeof guardKaruMonitoringIndexImport
+      parentRoute: typeof guardImport
+    }
     '/__guard/karu/penilaian/': {
       id: '/__guard/karu/penilaian/'
       path: '/karu/penilaian'
@@ -462,6 +475,7 @@ export const routeTree = rootRoute.addChildren({
     guardKainstalFeedbackIndexRoute,
     guardKakomwatRekomendasiIndexRoute,
     guardKaruLogBookIndexRoute,
+    guardKaruMonitoringIndexRoute,
     guardKaruPenilaianIndexRoute,
     guardPerawatSelfAssesmenIndexRoute,
     guardKainstalFeedbackPenilaianIdRoute,
@@ -514,6 +528,7 @@ export const routeTree = rootRoute.addChildren({
         "/__guard/kainstal/feedback/",
         "/__guard/kakomwat/rekomendasi/",
         "/__guard/karu/log-book/",
+        "/__guard/karu/monitoring/",
         "/__guard/karu/penilaian/",
         "/__guard/perawat/self-assesmen/",
         "/__guard/kainstal/feedback/penilaian/$id",
@@ -604,6 +619,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/__guard/karu/log-book/": {
       "filePath": "__guard.karu/log-book/index.tsx",
+      "parent": "/__guard"
+    },
+    "/__guard/karu/monitoring/": {
+      "filePath": "__guard.karu/monitoring/index.tsx",
       "parent": "/__guard"
     },
     "/__guard/karu/penilaian/": {

@@ -59,6 +59,9 @@ model Akun {
   UserRekomendasiKainstal_UserRekomendasiKainstal_email_user_kainstallToAkun UserRekomendasiKainstal[] @relation("UserRekomendasiKainstal_email_user_kainstallToAkun")
   UserRekomendasiKainstal_UserRekomendasiKainstal_email_user_kakomwatToAkun  UserRekomendasiKainstal[] @relation("UserRekomendasiKainstal_email_user_kakomwatToAkun")
 
+  NotifAsKaru    NotificationKaruToPerawat[] @relation("KaruNotifications")
+  NotifAsPerawat NotificationKaruToPerawat[] @relation("PerawatNotifications")
+
   @@index([masterRuanganRSId], map: "Akun_masterRuanganRSId_fkey")
   @@index([masterRumahSakitId], map: "Akun_masterRumahSakitId_fkey")
   @@index([userId], map: "Akun_userId_fkey")
@@ -364,6 +367,29 @@ model UserRekomendasiKainstal {
   @@index([idMasterRumahSakit], map: "UserRekomendasiKainstal_MasterRumahSakit_FK")
   @@index([id_user_penilaian_karu], map: "UserRekomendasiKainstal_UserPenilaianKaru_FK")
 }
+
+// Existing models...
+
+model NotificationKaruToPerawat {
+  id              String   @id @default(uuid())
+  fromKaruEmail   String
+  toPerawatEmail  String
+  message         String
+  isRead          Boolean  @default(false)
+  selfAsesmenDate DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  fromKaru  Akun @relation("KaruNotifications", fields: [fromKaruEmail], references: [email])
+  toPerawat Akun @relation("PerawatNotifications", fields: [toPerawatEmail], references: [email])
+
+  akunIduser String?
+
+  @@index([fromKaruEmail])
+  @@index([toPerawatEmail])
+}
+
+// Other existing models...
 
 enum PendidikanTerakhir {
   VOKASI

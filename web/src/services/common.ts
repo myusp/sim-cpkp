@@ -18,6 +18,9 @@ axiosInstance.interceptors.request.use(
             // Jika token ada, tambahkan ke header Authorization
             config.headers['Authorization'] = `Bearer ${JSON.parse(token)}`;
         }
+        config.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+        config.headers['Pragma'] = 'no-cache';
+        config.headers['Expires'] = '0';
 
         return config;
     },

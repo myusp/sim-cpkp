@@ -275,6 +275,8 @@ const assessment: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         }
     });
 
+
+
     fastify.get<{
         Querystring: UserAssessmentListParams;
         Reply: UserAssessmentListResponse | ErrorResponse;
@@ -319,6 +321,68 @@ const assessment: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             reply.status(500).send({ error: "Failed to fetch assessment summary" });
         }
     });
+
+    fastify.get<{
+        Querystring: { ruanganRSId: string, rumahSakitId: string, tgl: string };
+    }>('/list-user-status',
+        // { onRequest: [fastify.authenticate] },
+        async function (request, reply) {
+            try {
+                const { ruanganRSId, rumahSakitId, tgl } = request.query;
+                const date = dayjs(tgl)
+                if (!date.isValid()) {
+                    throw "invalid date query"
+                }
+                const users = await prisma.akun.findMany({
+                    where: {
+                        ...(ruanganRSId && { masterRuanganRSId: ruanganRSId }),
+                        ...(rumahSakitId && { masterRumahSakitId: rumahSakitId }),
+                        role: "perawat"
+                    },
+                    select: {
+                        email: true,
+                        nama: true,
+                    }
+                });
+                const assessment = await prisma.userAssesmen.findMany({
+                    select: {
+                        id: true,
+                        skp_1: true,
+                        skp_2: true,
+                        skp_3: true,
+                        skp_4: true,
+                        skp_5: true,
+                        skp_6: true,
+                        email: true
+                    },
+                    where: {
+                        AND: [
+                            {
+                                email: {
+                                    in: users.map(u => u.email)
+                                }
+                            },
+                            {
+                                tanggal: date.toDate()
+                            }
+                        ],
+                    },
+                });
+
+
+                return reply.status(200).send(users.map(u => {
+                    const assmn = assessment.find(a => a.email == u.email)
+                    return {
+                        user: u,
+                        asesmen: assmn ? assmn : null,
+                        status: !!assmn
+                    }
+                }));
+            } catch (error) {
+                reply.status(500).send({ error: "Failed to fetch assessment summary" });
+            }
+        });
+
 
     // Utility function to get the correct answer based on the user's education level
     function getCorrectAnswer(question: any, pendidikanTerakhir: string | null): string {
