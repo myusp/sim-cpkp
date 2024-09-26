@@ -38,7 +38,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
   void fastify.register(fastifyCron, {
     jobs: [
       {
-        cronTime: '23 15 * * *', // Example: Runs every day at midnight
+        cronTime: '0 18 * * *', // Example: Runs every day at midnight
         onTick: async (server) => {
           try {
             const { prisma } = fastify
