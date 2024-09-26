@@ -3,6 +3,7 @@ import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload';
 import { FastifyPluginAsync, FastifyServerOptions } from 'fastify';
 import fastifyCron from 'fastify-cron'; // Import fastify-cron
 import dayjs from 'dayjs';
+import { uniq } from 'lodash';
 
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {
 
@@ -37,35 +38,60 @@ const app: FastifyPluginAsync<AppOptions> = async (
   void fastify.register(fastifyCron, {
     jobs: [
       {
-        cronTime: '0 18 * * *', // Example: Runs every day at midnight
+        cronTime: '23 15 * * *', // Example: Runs every day at midnight
         onTick: async (server) => {
-          const { prisma } = fastify
-          // Define your cron task logic here
-          fastify.log.info('Cron job running at midnight');
-          const today = dayjs()
-          const allPerawatNotFillSelfAssesmen = await prisma.akun.findMany({
-            where: {
-              role: "perawat",
-              UserAssesmen: {
-                none: {
-                  tanggal: today.toDate()
+          try {
+            const { prisma } = fastify
+
+            fastify.log.info('Cron job running at midnight');
+            const today = dayjs()
+            const allPerawatNotFillSelfAssesmen = await prisma.akun.findMany({
+              where: {
+                role: "perawat",
+                UserAssesmen: {
+                  none: {
+                    tanggal: today.toDate()
+                  }
                 }
               }
-            }
-          })
+            })
 
-          // insert notif
-          await prisma.notificationKaruToPerawat.createMany({
-            data: allPerawatNotFillSelfAssesmen.map(u => {
-              return {
-                fromKaruEmail: "sistem",
-                toPerawatEmail: u.email,
-                message: "Pengingat ! Anda belum mengisi self asesmen tanggal " + today.format("YYYY-MM-DD"),
-                selfAsesmenDate: today.toDate()
+            // insert notif
+            await prisma.notificationKaruToPerawat.createMany({
+              data: allPerawatNotFillSelfAssesmen.map(u => {
+                return {
+                  fromKaruEmail: "sistem",
+                  toPerawatEmail: u.email,
+                  message: "Pengingat ! Anda belum mengisi self asesmen tanggal " + today.format("YYYY-MM-DD"),
+                  selfAsesmenDate: today.toDate()
+                }
+              })
+            })
+
+            const idRuangans = uniq(allPerawatNotFillSelfAssesmen.map(p => `${p.masterRuanganRSId}`))
+            // cari karu
+            const karus = await prisma.akun.findMany({
+              where: {
+                role: "karu",
+                masterRuanganRSId: {
+                  in: idRuangans
+                }
               }
             })
-          })
-          // You can also interact with your database or services here
+            karus.forEach(async (karu) => {
+              const perawats = allPerawatNotFillSelfAssesmen.filter(p => p.masterRuanganRSId == karu.masterRuanganRSId)
+              await prisma.notificationToKaru.create({
+                data: {
+                  toKaruEmail: karu.email,
+                  message: `${perawats.length} perawat ruangan anda belum mengisi Self-Assesment. Yaitu : ${perawats.map(p => p.nama).join(", ")}`,
+                  perawatEmails: perawats.map(p => p.email).join(","),
+                }
+              })
+            })
+          } catch (error) {
+            fastify.log.error(error, "Failed run scheduler")
+          }
+
         },
         start: true, // Start the cron job immediately
       },

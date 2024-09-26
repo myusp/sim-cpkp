@@ -261,7 +261,7 @@ const GuardSession = () => {
                         title='Edit Profil'
                     />
 
-                    {user?.role == "perawat" && <ButtonNotificationUser />}
+                    {["perawat", "karu", "katim"].includes(`${user?.role}`) && <ButtonNotificationUser />}
 
                     <Dropdown
                         menu={{

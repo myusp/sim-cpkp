@@ -1,3 +1,4 @@
+types/index.ts
 generator client {
   provider = "prisma-client-js"
 }
@@ -37,8 +38,8 @@ model User {
 }
 
 model Akun {
-  iduser                                                                     String                      @id @default(uuid())
-  email                                                                      String                      @unique
+  iduser                                                                     String                    @id @default(uuid())
+  email                                                                      String                    @unique
   password                                                                   String
   last_login                                                                 DateTime?
   nama                                                                       String
@@ -48,19 +49,19 @@ model Akun {
   userId                                                                     String?
   masterRumahSakitId                                                         String?
   masterRuanganRSId                                                          String?
-  created_at                                                                 DateTime                    @default(now())
-  MasterRuanganRS                                                            MasterRuanganRS?            @relation("AkunRuanganRS", fields: [masterRuanganRSId], references: [id])
-  MasterRumahSakit                                                           MasterRumahSakit?           @relation("AkunRumahSakit", fields: [masterRumahSakitId], references: [id])
-  User                                                                       User?                       @relation(fields: [userId], references: [id])
-  NotifAsKaru                                                                NotificationKaruToPerawat[] @relation("KaruNotifications")
-  NotifAsPerawat                                                             NotificationKaruToPerawat[] @relation("PerawatNotifications")
+  created_at                                                                 DateTime                  @default(now())
+  MasterRuanganRS                                                            MasterRuanganRS?          @relation("AkunRuanganRS", fields: [masterRuanganRSId], references: [id])
+  MasterRumahSakit                                                           MasterRumahSakit?         @relation("AkunRumahSakit", fields: [masterRumahSakitId], references: [id])
+  User                                                                       User?                     @relation(fields: [userId], references: [id])
   UserAssesmen                                                               UserAssesmen[]
   UserLogbookKaru                                                            UserLogbookKaru?
-  UserPenilaianKaruPerawat                                                   UserPenilaianKaru[]         @relation("akun-perawat")
+  UserPenilaianKaruPerawat                                                   UserPenilaianKaru[]       @relation("akun-perawat")
   UserPenilaianKaru                                                          UserPenilaianKaru[]
-  UserRekomendasiKainstal_UserRekomendasiKainstal_email_user_kainstallToAkun UserRekomendasiKainstal[]   @relation("UserRekomendasiKainstal_email_user_kainstallToAkun")
-  UserRekomendasiKainstal_UserRekomendasiKainstal_email_user_kakomwatToAkun  UserRekomendasiKainstal[]   @relation("UserRekomendasiKainstal_email_user_kakomwatToAkun")
-  NotificationToKaru                                                         NotificationToKaru[]        @relation("KaruNotificationsPerawat")
+  UserRekomendasiKainstal_UserRekomendasiKainstal_email_user_kainstallToAkun UserRekomendasiKainstal[] @relation("UserRekomendasiKainstal_email_user_kainstallToAkun")
+  UserRekomendasiKainstal_UserRekomendasiKainstal_email_user_kakomwatToAkun  UserRekomendasiKainstal[] @relation("UserRekomendasiKainstal_email_user_kakomwatToAkun")
+
+  NotifAsKaru    NotificationKaruToPerawat[] @relation("KaruNotifications")
+  NotifAsPerawat NotificationKaruToPerawat[] @relation("PerawatNotifications")
 
   @@index([masterRuanganRSId], map: "Akun_masterRuanganRSId_fkey")
   @@index([masterRumahSakitId], map: "Akun_masterRumahSakitId_fkey")
@@ -368,39 +369,346 @@ model UserRekomendasiKainstal {
   @@index([id_user_penilaian_karu], map: "UserRekomendasiKainstal_UserPenilaianKaru_FK")
 }
 
+// Existing models...
+
 model NotificationKaruToPerawat {
   id              String   @id @default(uuid())
   fromKaruEmail   String
   toPerawatEmail  String
-  message         String   @db.VarChar(7000)
+  message         String
   isRead          Boolean  @default(false)
+  selfAsesmenDate DateTime @default(now())
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  akunIduser      String?
-  selfAsesmenDate DateTime @default(now())
-  fromKaru        Akun     @relation("KaruNotifications", fields: [fromKaruEmail], references: [email])
-  toPerawat       Akun     @relation("PerawatNotifications", fields: [toPerawatEmail], references: [email])
+
+  fromKaru  Akun @relation("KaruNotifications", fields: [fromKaruEmail], references: [email])
+  toPerawat Akun @relation("PerawatNotifications", fields: [toPerawatEmail], references: [email])
+
+  akunIduser String?
 
   @@index([fromKaruEmail])
   @@index([toPerawatEmail])
 }
 
-model NotificationToKaru {
-  id              String   @id @default(uuid())
-  toKaruEmail     String
-  message         String   @db.VarChar(7000)
-  isRead          Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  selfAsesmenDate DateTime @default(now())
-  perawatEmails   String
-  toKaru          Akun     @relation("KaruNotificationsPerawat", fields: [toKaruEmail], references: [email])
-
-  @@index([toKaruEmail])
-}
+// Other existing models...
 
 enum PendidikanTerakhir {
   VOKASI
   NERS
   S2_KEP
 }
+
+
+
+type/request.ts
+import { Akun, MasterPertanyaanAssesmen, User } from "."
+
+export type LoginRequest = {
+    email: string
+    password: string
+}
+
+export type UserByEmailRequest = {
+    email: string
+}
+
+export type UserResetPassRequest = {
+    email: string
+    newPassword: string
+}
+
+export type UpdateUserRequest = {
+    email: string
+    akun: Akun
+    user?: User
+    cpd_pk1?: number[]
+    cpd_pk2?: number[]
+    cpd_pk3?: number[]
+    cpd_pk4?: number[]
+    cpd_pk5?: number[]
+    orientasi?: number[]
+    pelatihan?: number[]
+}
+
+export type RoomRequest = {
+    hospital_id: string
+}
+
+export type RoomParams = {
+    room_id: string;
+};
+
+export type RoomBody = {
+    nama: string;
+    id_rs: string;
+};
+
+export type HospitalParams = {
+    hospital_id: string;
+};
+
+export type HospitalBody = {
+    nama: string;
+};
+
+export type CpdParams = {
+    pk: 'pk1' | 'pk2' | 'pk3' | 'pk4' | 'pk5';
+};
+
+export type CpdBody = {
+    value: string;
+};
+
+export type CreateUserRequest = {
+    email: string;
+    password: string;
+    nama: string;
+    role: string;
+    pendidikanTerakhir?: string;
+    unitTempatBekerjaTerakhir?: string;
+    userId?: string;
+    masterRumahSakitId?: string;
+    masterRuanganRSId?: string;
+};
+
+export type UserSearchRequest = {
+    keyword?: string;         // Kata kunci untuk mencari berdasarkan nama atau email
+    rumahSakitId?: string;    // ID Rumah Sakit untuk filter
+    ruanganId?: string;
+    role?: string;     // ID Ruangan untuk filter
+};
+
+// src/types/request.ts
+export interface UserAssessmentParams {
+    id: string;
+}
+
+export interface UserAssessmentCreateRequest {
+    id_master_pertanyaans: string[];
+    answers: { id: number, answer: string }[];
+    tanggal?: string
+}
+
+export interface UserAssessmentUpdateRequest {
+    id_user_assesmen: string
+    answers: { id: number, answer: string }[];
+}
+
+export interface UserAssessmentListParams {
+    email?: string
+    rumahSakitId?: string
+    ruanganRSId?: string
+    statusPenilaian?: number
+}
+
+
+export type MasterPertanyaanCreateRequest = Omit<MasterPertanyaanAssesmen, 'id' | 'created_at' | 'updated_at'>;
+
+export type MasterPertanyaanUpdateRequest = Partial<Omit<MasterPertanyaanAssesmen, 'created_at' | 'updated_at'>>;
+
+export type MasterPertanyaanParams = {
+    id: number;
+};
+
+export type MasterLogBookKaruCreateRequest = {
+    skp: string;
+    kegiatan: string;
+    status?: number;
+};
+
+export type MasterLogBookKaruUpdateRequest = Partial<Omit<MasterLogBookKaruCreateRequest, 'id'>>;
+
+export type MasterLogBookKaruParams = {
+    id: number;
+};
+
+export type MasterPenilaianKaruCreateRequest = {
+    kategori: string;
+    penilaian: string;
+    status?: number;
+};
+
+export type MasterPenilaianKaruUpdateRequest = Partial<Omit<MasterPenilaianKaruCreateRequest, 'id'>>;
+
+export type MasterPenilaianKaruParams = {
+    id: number;
+};
+
+export type UserLogbookKaruCreateRequest = {
+    id_master_logbook_karus: string[];
+    answers: { id: number, jawaban: number }[];
+    userAsesmenId: string;
+};
+
+export type UserLogbookKaruUpdateRequest = {
+    id_user_logbook_karu: string;
+    answers: { id: number, jawaban: number }[];
+};
+
+export interface UserLogbookKaruListRequest {
+    rumahSakitId: string
+    ruanganRSId: string
+}
+
+
+type/response.ts
+import { Akun, MasterPertanyaanAssesmen, MasterRuanganRS, MasterRumahSakit, User, UserAssesmen, UserCPD_PK1, UserCPD_PK2, UserCPD_PK3, UserCPD_PK4, UserCPD_PK5, UserOrientasi, UserPelatihan } from "."
+
+export type LoginResponse = {
+    token: string
+}
+
+export type UserDetailResponse = {
+    email: string
+    iduser: string
+    role: string
+    last_login: string
+    pendidikanTerakhir: unknown
+    unitTempatBekerjaTerakhir: unknown
+    MasterRuanganRS: unknown
+    masterRumahSakitId: unknown
+    masterRuanganRSId: unknown
+    created_at: string
+    nama: string
+}
+
+export type HospitalResponse = {
+    id: string;
+    nama: string;
+};
+
+export type RoomResponse = {
+    id: string;
+    nama: string;
+    id_rs: string;
+};
+
+export type CpdResponse = {
+    id: number;
+    value: string;
+    pk: 'pk1' | 'pk2' | 'pk3' | 'pk4' | 'pk5';
+};
+
+
+export type CpdListResponse = CpdResponse[]
+
+export type ErrorResponse = {
+    error: string;
+};
+
+
+export type UserResponse = {
+    iduser: string;
+    email: string;
+    nama: string;
+    role: string;
+    pendidikanTerakhir?: string;
+    unitTempatBekerjaTerakhir?: string;
+    created_at: Date;
+    masterRumahSakitId?: string;
+    masterRuanganRSId?: string;
+};
+
+
+export type UpdateUserResponse = {
+    email: string
+    akun: Akun
+    user: User
+    cpd_pk1: number[]
+    cpd_pk2: number[]
+    cpd_pk3: number[]
+    cpd_pk4: number[]
+    cpd_pk5: number[]
+    orientasi: number[]
+    pelatihan: number[]
+}
+
+export type UserResetPassResponse = {
+    message: string;
+};
+
+export type UserSearchResponse = Akun[];
+
+// Menggabungkan tipe-tipe yang telah didefinisikan sebelumnya menjadi satu tipe composite
+export interface UserByEmailResponse {
+    email: string;
+    iduser: string;
+    role: string;
+    last_login: Date | null;
+    pendidikanTerakhir: string;
+    unitTempatBekerjaTerakhir: string | null;
+    masterRuanganRSId: string;
+    MasterRuanganRS: MasterRuanganRS;
+    masterRumahSakitId: string;
+    MasterRumahSakit: MasterRumahSakit;
+    created_at: Date;
+    User: UserDetails; // Berisi data user detail termasuk CPD, orientasi, pelatihan, dll.
+}
+
+// Menggabungkan bagian-bagian yang ada dalam User
+export interface UserDetails extends User {
+    cpdForPK1: UserCPD_PK1[];
+    cpdForPK2: UserCPD_PK2[];
+    cpdForPK3: UserCPD_PK3[];
+    cpdForPK4: UserCPD_PK4[];
+    cpdForPK5: UserCPD_PK5[];
+    orientasiYangDiikuti: UserOrientasi[];
+    pelatihanYangDiikuti: UserPelatihan[];
+}
+
+
+export type MasterPertanyaanResponse = MasterPertanyaanAssesmen;
+
+export type MasterPertanyaanActiveResponse = Omit<MasterPertanyaanAssesmen, 'vokasi' | 'ners'>;
+
+export interface UserAssessmentResponse {
+    id: string;
+    skp_1: number;
+    skp_2: number;
+    skp_3: number;
+    skp_4: number;
+    skp_5: number;
+    skp_6: number;
+    id_master_pertanyaans: string[];
+    answers: { id: number, answer: string }[];
+}
+
+export interface UserAssessmentViewResponse {
+    assesmen: UserAssesmen
+    answer: { answer: string, id: number }[],
+    questions: Omit<MasterPertanyaanAssesmen, "created_at" | "updated_at" | "status">[]
+}
+
+export interface UserAssessmentListResponse {
+    data: { assesmen: UserAssesmen, akun: Akun & { MasterRumahSakit?: MasterRumahSakit, MasterRuanganRS?: MasterRuanganRS } }[]
+}
+
+export type MasterLogBookKaruResponse = {
+    id: number;
+    skp: string;
+    kegiatan: string;
+    status: number;
+    created_at: Date;
+    updated_at: Date;
+};
+
+export type MasterLogBookKaruActiveResponse = Omit<MasterLogBookKaruResponse, 'status'>;
+
+export type MasterPenilaianKaruResponse = {
+    id: number;
+    kategori: string;
+    penilaian: string;
+    status: number;
+    created_at: Date;
+    updated_at: Date;
+};
+
+export type MasterPenilaianKaruActiveResponse = Omit<MasterPenilaianKaruResponse, 'status'>;
+
+export interface UserLogbookKaruResponse {
+    id: string;
+    id_master_logbook_karus: string[];
+    answers: { id: number, jawaban: number }[];
+}
+
+

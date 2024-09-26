@@ -14,11 +14,60 @@ export type getNotificationsServiceResponse = Array<{
     id: string
 }>
 
+export type getNotificationsKaruServiceResponse = Array<{
+    perawatEmails: string
+    selfAsesmenDate: string
+    isRead: boolean
+    createdAt: string
+    message: string
+    id: string
+}>
+
 export const getNotificationsService = async (email: string): Promise<getNotificationsServiceResponse> => {
     try {
         const response = await axiosInstance.get<getNotificationsServiceResponse>('/api/notifications/getlistnotif', {
             params: {
                 toPerawatEmail: email
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        throw error;
+    }
+};
+
+// Fungsi untuk mendapatkan jumlah notifikasi yang belum dibaca (getCountNotif)
+export const getUnreadNotificationCountKaruService = async (email: string): Promise<number> => {
+    try {
+        const response = await axiosInstance.get<{ count: number }>('/api/notifications/getcountnotif-karu', {
+            params: {
+                toKaruEmail: email
+            }
+        });
+        return response.data.count;
+    } catch (error) {
+        console.error('Error fetching unread notification count:', error);
+        throw error;
+    }
+};
+
+// Fungsi untuk menandai notifikasi sebagai telah dibaca (readNotif)
+export const markNotificationAsReadKaruService = async (id: string): Promise<{ message: string }> => {
+    try {
+        const response = await axiosInstance.put<{ message: string }>(`/api/notifications/readnotif-karu/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error marking notification as read:', error);
+        throw error;
+    }
+};
+
+export const getNotificationsKaruService = async (email: string): Promise<getNotificationsKaruServiceResponse> => {
+    try {
+        const response = await axiosInstance.get<getNotificationsKaruServiceResponse>('/api/notifications/getlistnotif-karu', {
+            params: {
+                toKaruEmail: email
             }
         });
         return response.data;
@@ -53,6 +102,7 @@ export const markNotificationAsReadService = async (id: string): Promise<{ messa
         throw error;
     }
 };
+
 
 // Fungsi untuk mengirim notifikasi baru (sendNotif)
 
